@@ -37,9 +37,7 @@ const Login = () => {
         <Button
           className="login-btn"
           variant="contained"
-          onClick={() =>
-            logout({ logoutParams: { returnTo: window.location.origin } })
-          }
+          onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
           color="primary"
           size="large"
         >

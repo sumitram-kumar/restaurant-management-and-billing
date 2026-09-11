@@ -40,12 +40,12 @@ const PrintInvoice = () => {
           </p>
           <div className="row-print">
             <div className="column-print">
-              <p style={{ fontSize: "7px" }} align="left">
+              <p style={{ fontSize: "7px", textAlign: "left" }}>
                 Order#{lastBill.billNumber}
               </p>
             </div>
             <div className="column-print">
-              <p style={{ fontSize: "7px" }} align="right">
+              <p style={{ fontSize: "7px", textAlign: "right" }}>
                 Date: {new Date(lastBill.billDate).toLocaleDateString()}
               </p>
             </div>
@@ -83,12 +83,12 @@ const PrintInvoice = () => {
           <div>
             <div className="row-print">
               <div className="column-print">
-                <p style={{ fontSize: "7.6px", marginLeft: "2px" }} align="left">
+                <p style={{ fontSize: "7.6px", marginLeft: "2px", textAlign: "left" }}>
                   Subtotal:
                 </p>
               </div>
               <div className="column-print">
-                <p style={{ fontSize: "7.6px" }} align="right">
+                <p style={{ fontSize: "7.6px", textAlign: "right" }}>
                   ₹ {lastBill.subtotal}
                 </p>
               </div>
@@ -96,12 +96,12 @@ const PrintInvoice = () => {
             {Number(lastBill.discountAmount) > 0 && (
               <div className="row-print">
                 <div className="column-print">
-                  <p style={{ fontSize: "7.6px", marginLeft: "2px" }} align="left">
+                  <p style={{ fontSize: "7.6px", marginLeft: "2px", textAlign: "left" }}>
                     (-) Discount:
                   </p>
                 </div>
                 <div className="column-print">
-                  <p style={{ fontSize: "7.6px" }} align="right">
+                  <p style={{ fontSize: "7.6px", textAlign: "right" }}>
                     ₹ {lastBill.discountAmount}
                   </p>
                 </div>
@@ -110,18 +110,18 @@ const PrintInvoice = () => {
             {(cgst > 0 || sgst > 0) && (
               <div className="row-print">
                 <div className="column-print">
-                  <p style={{ fontSize: "7.6px", marginLeft: "2px" }} align="left">
+                  <p style={{ fontSize: "7.6px", marginLeft: "2px", textAlign: "left" }}>
                     CGST@ {cgst}%
                   </p>
-                  <p style={{ fontSize: "7.6px", marginLeft: "2px" }} align="left">
+                  <p style={{ fontSize: "7.6px", marginLeft: "2px", textAlign: "left" }}>
                     SGST@ {sgst}%
                   </p>
                 </div>
                 <div className="column-print">
-                  <p style={{ fontSize: "7.6px" }} align="right">
+                  <p style={{ fontSize: "7.6px", textAlign: "right" }}>
                     ₹ {(Number(lastBill.taxAmount) / 2).toFixed(2)}
                   </p>
-                  <p style={{ fontSize: "7.6px" }} align="right">
+                  <p style={{ fontSize: "7.6px", textAlign: "right" }}>
                     ₹ {(Number(lastBill.taxAmount) / 2).toFixed(2)}
                   </p>
                 </div>
@@ -130,12 +130,12 @@ const PrintInvoice = () => {
             <hr></hr>
             <div className="row-print">
               <div className="column-print">
-                <p style={{ fontSize: "9px", marginLeft: "2px" }} align="left">
+                <p style={{ fontSize: "9px", marginLeft: "2px", textAlign: "left" }}>
                   <strong>Total:</strong>
                 </p>
               </div>
               <div className="column-print">
-                <p style={{ fontSize: "9px" }} align="right">
+                <p style={{ fontSize: "9px", textAlign: "right" }}>
                   <strong>₹ {lastBill.finalAmount}</strong>
                 </p>
               </div>
@@ -143,7 +143,7 @@ const PrintInvoice = () => {
             <hr></hr>
             <div className="row-print">
               <div>
-                <p style={{ fontSize: "5.5px", marginBottom: "8px" }} align="right">
+                <p style={{ fontSize: "5.5px", marginBottom: "8px", textAlign: "right" }}>
                   Payment Mode: {lastBill.paymentMode}
                 </p>
               </div>

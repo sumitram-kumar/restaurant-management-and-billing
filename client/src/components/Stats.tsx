@@ -25,7 +25,8 @@ import { getErrorMessage } from "../api/errorMessage";
 import { StatsResponse } from "../types";
 import type { Dayjs } from "dayjs";
 
-const money = (value: string | number | null | undefined) => Number(value ?? 0).toFixed(2);
+const money = (value: string | number | null | undefined) =>
+  Number(value ?? 0).toFixed(2);
 
 const Stats = () => {
   const [open, setOpen] = useState(false);
@@ -40,7 +41,10 @@ const Stats = () => {
     }
 
     try {
-      const data = await getStats(fromDate.format("YYYY-MM-DD"), toDate.format("YYYY-MM-DD"));
+      const data = await getStats(
+        fromDate.format("YYYY-MM-DD"),
+        toDate.format("YYYY-MM-DD")
+      );
       setStats(data);
     } catch (error) {
       toast.error(getErrorMessage(error, "Failed to load stats"));

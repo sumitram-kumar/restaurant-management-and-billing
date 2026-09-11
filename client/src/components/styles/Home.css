@@ -1,26 +1,26 @@
 .css-69324s button.home {
-    margin: 4rem !important;
+  margin: 4rem !important;
 }
 
 .home {
-    min-width: 12.5rem !important;
-    line-height: 7rem !important;
-    font-size: 2rem !important;
+  min-width: 12.5rem !important;
+  line-height: 7rem !important;
+  font-size: 2rem !important;
 }
 
-.dashHeading{
-    color: #497174;
-    font-size: 1.5rem;
-    margin-top: 4.5rem;
+.dashHeading {
+  color: #497174;
+  font-size: 1.5rem;
+  margin-top: 4.5rem;
 }
 
 .box-home {
-    width: auto;
-    height: 22rem;
-    position: absolute;
-    top:0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
+  width: auto;
+  height: 22rem;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
 }

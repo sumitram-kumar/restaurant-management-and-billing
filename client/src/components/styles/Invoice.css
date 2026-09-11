@@ -45,10 +45,10 @@
 }
 
 .fin {
-    min-width: 3rem !important;
-    width: 23rem;
-    line-height: 2rem !important;
-    font-size: 1rem !important;
+  min-width: 3rem !important;
+  width: 23rem;
+  line-height: 2rem !important;
+  font-size: 1rem !important;
 }
 
 .invoiceHead {
@@ -69,17 +69,15 @@
 }
 
 .first-col-invoice {
-  text-align: center!important;
+  text-align: center !important;
 }
 
-.deleteCell{
-margin: 0rem!important;
-padding: 0rem!important;
+.deleteCell {
+  margin: 0rem !important;
+  padding: 0rem !important;
 }
 
-.deleteColumn{
-margin: 0rem!important;
-padding: 0rem!important;
+.deleteColumn {
+  margin: 0rem !important;
+  padding: 0rem !important;
 }
-
-

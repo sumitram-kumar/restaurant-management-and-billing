@@ -1,40 +1,39 @@
 .menuAdd {
-    min-width: 3rem !important;
-    line-height: 2.5rem !important;
-    font-size: 1.5rem !important;
-    margin: 0.5rem !important;
+  min-width: 3rem !important;
+  line-height: 2.5rem !important;
+  font-size: 1.5rem !important;
+  margin: 0.5rem !important;
 }
 
-
 .tableBtn-edit {
-    margin-right: 2rem!important;
+  margin-right: 2rem !important;
 }
 
 .tableBtn-del {
-    margin-left: 2rem!important;
+  margin-left: 2rem !important;
 }
 
 .menuTb {
-    font-weight: bolder !important;
-    text-align: center!important;
-    font-size: 1rem!important;
+  font-weight: bolder !important;
+  text-align: center !important;
+  font-size: 1rem !important;
 }
 
 .paper-cont {
-    background-color: #FAF8F1 !important;
+  background-color: #faf8f1 !important;
 }
 
 .first-col {
-    text-align: center!important;
+  text-align: center !important;
 }
 
-.menuHead{
-    color: #497174;
-    font-size: 1.5rem;
-    margin-top: 1rem;
-    margin-bottom: 0rem;
+.menuHead {
+  color: #497174;
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 0rem;
 }
 
 .menu {
-    justify-content: left!important;
+  justify-content: left !important;
 }

@@ -25,8 +25,16 @@ import BottomNavigation from "@mui/material/BottomNavigation";
 import { useCatalog } from "../context/CatalogContext";
 import { useBillDraft } from "../context/BillContext";
 import { createBill } from "../api/bills";
+import { getErrorMessage } from "../api/errorMessage";
+import { PaymentMode, QuantityType } from "../types";
 
-const PAYMENT_MODES = ["CASH", "DEBIT_CARD", "CREDIT_CARD", "UPI", "OTHER"];
+const PAYMENT_MODES: PaymentMode[] = [
+  "CASH",
+  "DEBIT_CARD",
+  "CREDIT_CARD",
+  "UPI",
+  "OTHER",
+];
 
 const Invoice = () => {
   const navigate = useNavigate();
@@ -35,10 +43,10 @@ const Invoice = () => {
     useBillDraft();
 
   const [foodName, setFoodName] = useState("");
-  const [quantityType, setQuantityType] = useState("");
+  const [quantityType, setQuantityType] = useState<QuantityType | "">("");
   const [quantity, setQuantity] = useState("");
   const [discount, setDiscount] = useState("");
-  const [paymentMode, setPaymentMode] = useState("");
+  const [paymentMode, setPaymentMode] = useState<PaymentMode | "">("");
 
   const handleAdd = () => {
     if (!foodName || !quantityType || !quantity) {
@@ -98,7 +106,7 @@ const Invoice = () => {
       clearDraft();
       navigate("/printInvoice");
     } catch (error) {
-      toast.error(error.response?.data?.error ?? "Failed to create invoice");
+      toast.error(getErrorMessage(error, "Failed to create invoice"));
     }
   };
 
@@ -133,7 +141,7 @@ const Invoice = () => {
                   name="payment_mode"
                   label="Payment Mode"
                   value={paymentMode}
-                  onChange={(e) => setPaymentMode(e.target.value)}
+                  onChange={(e) => setPaymentMode(e.target.value as PaymentMode)}
                 >
                   {PAYMENT_MODES.map((mode) => (
                     <MenuItem key={mode} value={mode}>
@@ -168,7 +176,7 @@ const Invoice = () => {
                     name="row-radio-buttons-group"
                     sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
                     value={quantityType}
-                    onChange={(e) => setQuantityType(e.target.value)}
+                    onChange={(e) => setQuantityType(e.target.value as QuantityType)}
                   >
                     <FormControlLabel value="FULL" control={<Radio />} label="Full" />
                     <FormControlLabel value="HALF" control={<Radio />} label="Half" />
@@ -253,7 +261,11 @@ const Invoice = () => {
                         key={i}
                         sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                       >
-                        <TableCell component="th" scope="row" className="first-col-invoice">
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          className="first-col-invoice"
+                        >
                           {i + 1}
                         </TableCell>
                         <TableCell align="center">

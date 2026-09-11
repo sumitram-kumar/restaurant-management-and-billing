@@ -1,77 +1,77 @@
 .column-print {
-    float: left;
-    width: 50%;
-  }
-  
-  .row-print:after {
-    content: "";
-    display: table;
-    clear: both;
-  }
+  float: left;
+  width: 50%;
+}
 
-  hr {
-    border-style: dashed;
-  }
+.row-print:after {
+  content: "";
+  display: table;
+  clear: both;
+}
 
-  p {
-    margin: 2px;
-  }
+hr {
+  border-style: dashed;
+}
 
-  p.centered {
-    margin-bottom:5px;
-  }
+p {
+  margin: 2px;
+}
 
-  table{
-    margin-top: 3px;
-    border-bottom: dashed black 0.7px;
-    border-collapse: collapse;
-  }
+p.centered {
+  margin-bottom: 5px;
+}
 
-  tr.title {
-    border-style: dashed;
-    border-color: black;
-    border-width: 0.7px;
-    border-left-style: none;
-    border-right-style: none;
-    border-collapse: collapse;
-  }
+table {
+  margin-top: 3px;
+  border-bottom: dashed black 0.7px;
+  border-collapse: collapse;
+}
+
+tr.title {
+  border-style: dashed;
+  border-color: black;
+  border-width: 0.7px;
+  border-left-style: none;
+  border-right-style: none;
+  border-collapse: collapse;
+}
 
 td.description,
 th.description {
-    width: 75px;
-    max-width: 75px;
-    word-break: break-all;
-    padding-left: 2px; 
-    border-collapse: collapse;
+  width: 75px;
+  max-width: 75px;
+  word-break: break-all;
+  padding-left: 2px;
+  border-collapse: collapse;
 }
 
 td.quantity,
 th.quantity {
-    width: 40px;
-    max-width: 40px;
-    word-break: break-all;
+  width: 40px;
+  max-width: 40px;
+  word-break: break-all;
 }
 
 td.price,
 th.price {
-    width: 40px;
-    max-width: 40px;
-    word-break: break-all;
+  width: 40px;
+  max-width: 40px;
+  word-break: break-all;
 }
 
 .centered {
-    text-align: center;
-    align-content: center;
+  text-align: center;
+  align-content: center;
 }
 
 .ticket {
-    width: 155px;
-    max-width: 155px;
+  width: 155px;
+  max-width: 155px;
 }
 
 @media print {
-    .hidden-print,
-    .hidden-print * {
-        display: none !important;
-    }
+  .hidden-print,
+  .hidden-print * {
+    display: none !important;
+  }
 }

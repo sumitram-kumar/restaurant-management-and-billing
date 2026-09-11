@@ -48,7 +48,14 @@ export function BillProvider({ children }: { children: ReactNode }) {
   const clearDraft = () => setDraftLines([]);
 
   const value = useMemo(
-    () => ({ draftLines, addOrUpdateLine, removeLine, clearDraft, lastBill, setLastBill }),
+    () => ({
+      draftLines,
+      addOrUpdateLine,
+      removeLine,
+      clearDraft,
+      lastBill,
+      setLastBill,
+    }),
     [draftLines, lastBill]
   );
 

@@ -13,10 +13,9 @@
 .outer {
   margin: 2rem;
   vertical-align: bottom !important;
-  
 }
 
-.inner{
+.inner {
   display: flex;
   align-items: center;
   justify-content: center;
