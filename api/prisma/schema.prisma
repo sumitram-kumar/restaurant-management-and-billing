@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum PaymentMode {
+  CASH
+  DEBIT_CARD
+  CREDIT_CARD
+  UPI
+  OTHER
+}
+
+enum QuantityType {
+  HALF
+  FULL
+  NA
+}
+
+model MenuItem {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  category  String
+  halfPrice Decimal  @db.Decimal(10, 2)
+  fullPrice Decimal  @db.Decimal(10, 2)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lineItems BillLineItem[]
+
+  @@index([isActive])
+}
+
+model TaxRate {
+  id            Int      @id @default(autoincrement())
+  cgst          Decimal  @db.Decimal(5, 2)
+  sgst          Decimal  @db.Decimal(5, 2)
+  effectiveFrom DateTime @default(now())
+
+  bills Bill[]
+
+  @@index([effectiveFrom])
+}
+
+model Bill {
+  id              Int         @id @default(autoincrement())
+  billNumber      BigInt      @unique
+  billDate        DateTime    @default(now())
+  paymentMode     PaymentMode
+  subtotal        Decimal     @db.Decimal(10, 2)
+  discountPercent Decimal     @db.Decimal(5, 2)
+  discountAmount  Decimal     @db.Decimal(10, 2)
+  taxAmount       Decimal     @db.Decimal(10, 2)
+  finalAmount     Decimal     @db.Decimal(10, 2)
+  createdBySub    String?
+  createdAt       DateTime    @default(now())
+
+  taxRateId Int
+  taxRate   TaxRate @relation(fields: [taxRateId], references: [id])
+
+  lineItems BillLineItem[]
+
+  @@index([billDate])
+}
+
+model BillLineItem {
+  id               Int          @id @default(autoincrement())
+  quantity         Int
+  quantityType     QuantityType
+  foodNameSnapshot String
+  unitPrice        Decimal      @db.Decimal(10, 2)
+  amount           Decimal      @db.Decimal(10, 2)
+
+  billId Int
+  bill   Bill @relation(fields: [billId], references: [id], onDelete: Cascade)
+
+  menuItemId Int
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+
+  @@index([billId])
+  @@index([menuItemId])
+}
