@@ -9,6 +9,9 @@ export const createBill = async (
   req: Request<unknown, unknown, CreateBillBody>,
   res: Response
 ) => {
-  const bill = await billsService.createBill(req.body);
+  const bill = await billsService.createBill({
+    ...req.body,
+    createdBySub: req.auth?.payload.sub,
+  });
   res.status(201).json(bill);
 };

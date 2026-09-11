@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
+    "express-oauth2-jwt-bearer": "^1.10.0",
     "md5": "^2.3.0",
     "zod": "^4.6.2"
   },

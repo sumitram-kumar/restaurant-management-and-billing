@@ -37,6 +37,19 @@ export const errorHandler = (
     return res.status(err.statusCode).json({ error: err.message });
   }
 
+  // express-oauth2-jwt-bearer throws its own UnauthorizedError/InvalidTokenError
+  // classes (not AppError) for a missing/expired/malformed token. Rather than
+  // import and enumerate them, treat anything shaped like one of Express's own
+  // HTTP errors (a numeric statusCode) the same way.
+  if (
+    err instanceof Error &&
+    "statusCode" in err &&
+    typeof (err as { statusCode: unknown }).statusCode === "number"
+  ) {
+    const statusCode = (err as { statusCode: number }).statusCode;
+    return res.status(statusCode).json({ error: err.message });
+  }
+
   console.error(err);
   return res.status(500).json({ error: "Internal server error" });
 };
