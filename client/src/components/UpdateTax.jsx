@@ -1,124 +1,100 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import "./styles/UpdateTax.css";
 import Navbar from "./Navbar";
-import { useAuth0 } from "@auth0/auth0-react";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import Paper from "@mui/material/Paper";
+import { useCatalog } from "../context/CatalogContext";
+import { createTaxRate } from "../api/tax";
 
-const UpdateTax = ({ rates, setRates }) => {
-  const { isAuthenticated } = useAuth0();
-
-  const getRates = async () => {
-    const response = await axios.get(
-      "https://kalikaapi.up.railway.app/getRates"
-    );
-    setRates((rates) => ({
-      ...rates,
-      CGST: response.data.CGST,
-      SGST: response.data.SGST,
-    }));
-  };
-
-  useEffect(() => {
-    getRates();
-  }, []);
+const UpdateTax = () => {
+  const { taxRate, refreshTaxRate } = useCatalog();
+  const [draft, setDraft] = useState({ cgst: "", sgst: "" });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setRates((rates) => ({
-      ...rates,
-      [name]: value,
-    }));
+    setDraft((current) => ({ ...current, [name]: value }));
   };
 
-  const updateRates = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!rates.CGST || !rates.SGST) {
+    if (!draft.cgst || !draft.sgst) {
       toast.error("Enter All Fields!");
-    } else {
+      return;
+    }
+
+    try {
+      await createTaxRate({ cgst: Number(draft.cgst), sgst: Number(draft.sgst) });
       toast.success("Taxes Updated!");
-      axios
-        .post("https://kalikaapi.up.railway.app/getNewRates", { ...rates })
-        .then((response) => console.log(response))
-        .catch((error) => console.log(error));
+      await refreshTaxRate();
+    } catch (error) {
+      toast.error(error.response?.data?.error ?? "Failed to update tax rate");
     }
   };
 
-  useEffect(() => {
-    // console.log(rates);
-  }, [rates]);
+  const cgst = draft.cgst !== "" ? draft.cgst : taxRate.cgst;
+  const sgst = draft.sgst !== "" ? draft.sgst : taxRate.sgst;
 
   return (
-    isAuthenticated && (
-      <div>
-        <div className="navbar">
-          <Navbar showText="UPDATE TAX" />
-        </div>
-        <div className="below-navbar">
-          <Box
-            component="form"
-            sx={{
-              "& .MuiTextField-root": { m: 1, width: "25ch" },
-            }}
-            noValidate
-            autoComplete="off"
-          >
-            <div className="tax-text">
-              <TextField
-                className="tax"
-                error={rates.CGST < 0}
-                helperText={rates.CGST < 0 && "(-) Negative Input"}
-                id="outlined-required"
-                label="CGST"
-                type="number"
-                name="CGST"
-                onChange={handleChange}
-                value={rates.CGST || ""}
-              />
-            </div>
-            <div className="tax-text">
-              <TextField
-                className="tax"
-                error={rates.SGST < 0}
-                helperText={rates.CGST < 0 && "(-) Negative Input"}
-                id="outlined-required"
-                label="SGST"
-                type="number"
-                name="SGST"
-                onChange={handleChange}
-                value={rates.SGST || ""}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </div>
-            <br></br>
-            <Button
-              className="tax-btn"
-              variant="contained"
-              onClick={updateRates}
-              color="success"
-              size="large"
-            >
-              UPDATE TAXES
-            </Button>
-          </Box>
-        </div>
-        <div>
-          <Paper
-            sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
-            elevation={3}
-          >
-            <BottomNavigation sx={{ backgroundColor: "primary.main" }} />
-          </Paper>
-        </div>
+    <div>
+      <div className="navbar">
+        <Navbar showText="UPDATE TAX" />
       </div>
-    )
+      <div className="below-navbar">
+        <Box
+          component="form"
+          sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
+          noValidate
+          autoComplete="off"
+        >
+          <div className="tax-text">
+            <TextField
+              className="tax"
+              error={Number(cgst) < 0}
+              helperText={Number(cgst) < 0 && "(-) Negative Input"}
+              id="outlined-required"
+              label="CGST"
+              type="number"
+              name="cgst"
+              onChange={handleChange}
+              value={cgst}
+            />
+          </div>
+          <div className="tax-text">
+            <TextField
+              className="tax"
+              error={Number(sgst) < 0}
+              helperText={Number(sgst) < 0 && "(-) Negative Input"}
+              id="outlined-required"
+              label="SGST"
+              type="number"
+              name="sgst"
+              onChange={handleChange}
+              value={sgst}
+              InputLabelProps={{ shrink: true }}
+            />
+          </div>
+          <br></br>
+          <Button
+            className="tax-btn"
+            variant="contained"
+            onClick={handleSubmit}
+            color="success"
+            size="large"
+          >
+            UPDATE TAXES
+          </Button>
+        </Box>
+      </div>
+      <div>
+        <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3}>
+          <BottomNavigation sx={{ backgroundColor: "primary.main" }} />
+        </Paper>
+      </div>
+    </div>
   );
 };
 

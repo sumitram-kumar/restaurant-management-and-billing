@@ -4,24 +4,11 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import "./styles/Home.css";
 import Navbar from "./Navbar";
-import { toast } from "react-toastify";
 import Paper from "@mui/material/Paper";
-import { useAuth0 } from "@auth0/auth0-react";
 import BottomNavigation from "@mui/material/BottomNavigation";
-// import { makeStyles } from "@mui/material";
 
-// const useStyles = makeStyles({
-//   btn: {
-//     minWidth: "12.5rem !important",
-//     lineHeight: "7rem !important",
-//     fontSize: "2rem !important",
-//   }
-// });
-
-const Home = ({ authenticated }) => {
-  // const classes = useStyles();
+const Home = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth0();
 
   return (
     <div>
@@ -37,11 +24,7 @@ const Home = ({ authenticated }) => {
               color="success"
               variant="contained"
               size="large"
-              onClick={() => {
-                isAuthenticated
-                  ? navigate("/invoice")
-                  : toast.error("Please Login");
-              }}
+              onClick={() => navigate("/invoice")}
             >
               Invoice
             </Button>
@@ -50,11 +33,7 @@ const Home = ({ authenticated }) => {
               color="success"
               variant="contained"
               size="large"
-              onClick={() => {
-                isAuthenticated
-                  ? navigate("/menu")
-                  : toast.error("Please Login");
-              }}
+              onClick={() => navigate("/menu")}
             >
               Menu
             </Button>
@@ -63,11 +42,7 @@ const Home = ({ authenticated }) => {
               color="success"
               variant="contained"
               size="large"
-              onClick={() => {
-                isAuthenticated
-                  ? navigate("/showStats")
-                  : toast.error("Please Login");
-              }}
+              onClick={() => navigate("/showStats")}
             >
               Stats
             </Button>
@@ -76,11 +51,7 @@ const Home = ({ authenticated }) => {
               color="success"
               variant="contained"
               size="large"
-              onClick={() => {
-                isAuthenticated
-                  ? navigate("/tax")
-                  : toast.error("Please Login");
-              }}
+              onClick={() => navigate("/tax")}
             >
               Tax
             </Button>
@@ -88,11 +59,8 @@ const Home = ({ authenticated }) => {
         </Box>
       </div>
       <div>
-        <Paper
-          sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
-          elevation={3}
-        >
-          <BottomNavigation sx={{ backgroundColor: 'primary.main' }}/>
+        <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3}>
+          <BottomNavigation sx={{ backgroundColor: "primary.main" }} />
         </Paper>
       </div>
     </div>
