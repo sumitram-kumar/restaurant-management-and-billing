@@ -1,13 +1,16 @@
 import "./lib/bigintJson";
 import express from "express";
 import cors from "cors";
+import pinoHttp from "pino-http";
 import { env } from "./config/env";
+import { logger } from "./lib/logger";
 import { apiRouter } from "./routes";
 import { requireAuth } from "./middleware/auth";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 
 export const app = express();
 
+app.use(pinoHttp({ logger }));
 app.use(cors({ origin: env.CORS_ORIGIN }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
