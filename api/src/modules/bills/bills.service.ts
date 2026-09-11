@@ -1,5 +1,6 @@
 import { PaymentMode, QuantityType } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
+import { BadRequestError } from "../../lib/AppError";
 import { BillLineInput, computeBillTotals } from "./billCalculator";
 
 export interface CreateBillLineInput {
@@ -27,7 +28,7 @@ export async function createBill(input: CreateBillInput) {
   const lineInputs: BillLineInput[] = input.lines.map((line) => {
     const menuItem = menuItemById.get(line.menuItemId);
     if (!menuItem) {
-      throw new Error(`Menu item ${line.menuItemId} not found or inactive`);
+      throw new BadRequestError(`Menu item ${line.menuItemId} not found or inactive`);
     }
     const unitPrice =
       line.quantityType === QuantityType.HALF ? menuItem.halfPrice : menuItem.fullPrice;
@@ -43,7 +44,7 @@ export async function createBill(input: CreateBillInput) {
 
   const taxRate = await prisma.taxRate.findFirst({ orderBy: { effectiveFrom: "desc" } });
   if (!taxRate) {
-    throw new Error("No tax rate configured");
+    throw new BadRequestError("No tax rate configured — set one via POST /api/tax first");
   }
 
   const totals = computeBillTotals(lineInputs, input.discountPercent, {

@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
+import { z } from "zod";
 import * as billsService from "./bills.service";
+import { createBillBodySchema } from "./bills.schemas";
 
-export const createBill = async (req: Request, res: Response) => {
-  const { paymentMode, discountPercent, lines } = req.body;
-  const bill = await billsService.createBill({
-    paymentMode,
-    discountPercent: Number(discountPercent),
-    lines,
-  });
+type CreateBillBody = z.infer<typeof createBillBodySchema>;
+
+export const createBill = async (
+  req: Request<unknown, unknown, CreateBillBody>,
+  res: Response
+) => {
+  const bill = await billsService.createBill(req.body);
   res.status(201).json(bill);
 };

@@ -2,6 +2,7 @@ import "./lib/bigintJson";
 import express from "express";
 import cors from "cors";
 import { apiRouter } from "./routes";
+import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 
 export const app = express();
 
@@ -14,3 +15,6 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api", apiRouter);
+
+app.use(notFoundHandler);
+app.use(errorHandler);
