@@ -1,5 +1,11 @@
 node_modules
 credentials.json
+client/build
+api/dist
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
 
 # Logs
 logs
