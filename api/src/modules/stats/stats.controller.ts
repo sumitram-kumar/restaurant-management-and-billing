@@ -1,11 +1,8 @@
 import { Request, Response } from "express";
 import * as statsService from "./stats.service";
 
-export const getStats = async (
-  req: Request<unknown, unknown, unknown, { from: Date; to: Date }>,
-  res: Response
-) => {
-  const { from, to } = req.query;
+export const getStats = async (req: Request, res: Response) => {
+  const { from, to } = req.query as unknown as { from: Date; to: Date };
 
   const [salesByItem, periodTotals] = await Promise.all([
     statsService.getSalesByItem(from, to),

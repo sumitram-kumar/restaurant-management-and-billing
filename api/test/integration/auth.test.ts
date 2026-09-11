@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, describe, it } from "vitest";
 import request from "supertest";
 // No mock here, deliberately — this file exercises the real
 // express-oauth2-jwt-bearer middleware, unlike the other integration

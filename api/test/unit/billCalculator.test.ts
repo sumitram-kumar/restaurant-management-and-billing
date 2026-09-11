@@ -44,7 +44,10 @@ describe("computeBillTotals", () => {
   });
 
   it("handles a 100% discount, zeroing tax and final amount", () => {
-    const totals = computeBillTotals([line({ unitPrice: 100 })], 100, { cgst: 5, sgst: 5 });
+    const totals = computeBillTotals([line({ unitPrice: 100 })], 100, {
+      cgst: 5,
+      sgst: 5,
+    });
     expect(totals.discountAmount).toBe(100);
     expect(totals.taxAmount).toBe(0);
     expect(totals.finalAmount).toBe(0);

@@ -6,10 +6,8 @@ export const getCurrentTaxRate = async (_req: Request, res: Response) => {
   res.json(rate ?? { cgst: 0, sgst: 0, effectiveFrom: null });
 };
 
-export const createTaxRate = async (
-  req: Request<unknown, unknown, { cgst: number; sgst: number }>,
-  res: Response
-) => {
-  const rate = await taxService.createTaxRate(req.body);
+export const createTaxRate = async (req: Request, res: Response) => {
+  const { cgst, sgst } = req.body as { cgst: number; sgst: number };
+  const rate = await taxService.createTaxRate({ cgst, sgst });
   res.status(201).json(rate);
 };

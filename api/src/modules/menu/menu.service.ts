@@ -16,8 +16,7 @@ export const listMenuItems = () =>
 export const getMenuItemById = (id: number) =>
   prisma.menuItem.findUniqueOrThrow({ where: { id } });
 
-export const createMenuItem = (data: MenuItemInput) =>
-  prisma.menuItem.create({ data });
+export const createMenuItem = (data: MenuItemInput) => prisma.menuItem.create({ data });
 
 export const updateMenuItem = (id: number, data: MenuItemInput) =>
   prisma.menuItem.update({ where: { id }, data });

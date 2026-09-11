@@ -3,7 +3,12 @@ import { PrismaClient, PaymentMode, QuantityType } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const MENU_ITEMS = [
-  { name: "Paneer Butter Masala", category: "Main Course", halfPrice: 120, fullPrice: 220 },
+  {
+    name: "Paneer Butter Masala",
+    category: "Main Course",
+    halfPrice: 120,
+    fullPrice: 220,
+  },
   { name: "Dal Makhani", category: "Main Course", halfPrice: 90, fullPrice: 160 },
   { name: "Butter Chicken", category: "Main Course", halfPrice: 150, fullPrice: 280 },
   { name: "Veg Biryani", category: "Rice", halfPrice: 110, fullPrice: 200 },

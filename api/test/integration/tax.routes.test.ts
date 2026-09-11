@@ -1,9 +1,14 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
+import type express from "express";
 import request from "supertest";
 
 vi.mock("../../src/middleware/auth", () => ({
-  requireAuth: (req: any, _res: any, next: () => void) => {
-    req.auth = { payload: { sub: "test-user" } };
+  requireAuth: (
+    req: express.Request,
+    _res: express.Response,
+    next: express.NextFunction
+  ) => {
+    req.auth = { payload: { sub: "test-user" } } as express.Request["auth"];
     next();
   },
 }));

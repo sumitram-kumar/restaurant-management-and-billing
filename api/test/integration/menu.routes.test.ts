@@ -1,4 +1,5 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
+import type express from "express";
 import request from "supertest";
 
 // These tests are about menu CRUD/validation behavior, not Auth0 token
@@ -6,8 +7,12 @@ import request from "supertest";
 // the real middleware), so the auth gate is replaced with a stub that
 // always lets a fake authenticated user through.
 vi.mock("../../src/middleware/auth", () => ({
-  requireAuth: (req: any, _res: any, next: () => void) => {
-    req.auth = { payload: { sub: "test-user" } };
+  requireAuth: (
+    req: express.Request,
+    _res: express.Response,
+    next: express.NextFunction
+  ) => {
+    req.auth = { payload: { sub: "test-user" } } as express.Request["auth"];
     next();
   },
 }));

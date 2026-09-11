@@ -1,13 +1,13 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 
-type AsyncRouteHandler = (
-  req: Request<any, any, any, any>,
-  res: Response,
-  next: NextFunction
-) => Promise<void>;
-
+// Express's own RequestHandler generics (Params/ResBody/ReqBody/ReqQuery) don't
+// compose well across a chain of differently-typed middleware, so handlers here
+// use Express's plain defaults and read/cast the already-validated req.body,
+// req.params, req.query locally instead of threading generics through Router.
 export const asyncHandler =
-  (handler: AsyncRouteHandler) =>
-  (req: Request, res: Response, next: NextFunction) => {
+  (
+    handler: (req: Request, res: Response, next: NextFunction) => Promise<void>
+  ): RequestHandler =>
+  (req, res, next) => {
     handler(req, res, next).catch(next);
   };
