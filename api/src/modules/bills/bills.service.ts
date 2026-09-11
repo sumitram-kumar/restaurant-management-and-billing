@@ -76,6 +76,6 @@ export async function createBill(input: CreateBillInput) {
         })),
       },
     },
-    include: { lineItems: true },
+    include: { lineItems: true, taxRate: true },
   });
 }
