@@ -21,14 +21,17 @@ import "./styles/Stats.css";
 import Navbar from "./Navbar";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import { getStats } from "../api/stats";
+import { getErrorMessage } from "../api/errorMessage";
+import { StatsResponse } from "../types";
+import type { Dayjs } from "dayjs";
 
-const money = (value) => Number(value ?? 0).toFixed(2);
+const money = (value: string | number | null | undefined) => Number(value ?? 0).toFixed(2);
 
 const Stats = () => {
   const [open, setOpen] = useState(false);
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
-  const [stats, setStats] = useState(null);
+  const [fromDate, setFromDate] = useState<Dayjs | null>(null);
+  const [toDate, setToDate] = useState<Dayjs | null>(null);
+  const [stats, setStats] = useState<StatsResponse | null>(null);
 
   const handleShow = async () => {
     if (!fromDate || !toDate) {
@@ -40,7 +43,7 @@ const Stats = () => {
       const data = await getStats(fromDate.format("YYYY-MM-DD"), toDate.format("YYYY-MM-DD"));
       setStats(data);
     } catch (error) {
-      toast.error(error.response?.data?.error ?? "Failed to load stats");
+      toast.error(getErrorMessage(error, "Failed to load stats"));
     }
   };
 
@@ -55,7 +58,6 @@ const Stats = () => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker
                 label="Begin"
-                color="success"
                 inputFormat="YYYY-MM-DD"
                 value={fromDate}
                 onChange={setFromDate}

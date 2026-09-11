@@ -9,17 +9,18 @@ import BottomNavigation from "@mui/material/BottomNavigation";
 import Paper from "@mui/material/Paper";
 import { useCatalog } from "../context/CatalogContext";
 import { createTaxRate } from "../api/tax";
+import { getErrorMessage } from "../api/errorMessage";
 
 const UpdateTax = () => {
   const { taxRate, refreshTaxRate } = useCatalog();
   const [draft, setDraft] = useState({ cgst: "", sgst: "" });
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setDraft((current) => ({ ...current, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!draft.cgst || !draft.sgst) {
       toast.error("Enter All Fields!");
@@ -31,7 +32,7 @@ const UpdateTax = () => {
       toast.success("Taxes Updated!");
       await refreshTaxRate();
     } catch (error) {
-      toast.error(error.response?.data?.error ?? "Failed to update tax rate");
+      toast.error(getErrorMessage(error, "Failed to update tax rate"));
     }
   };
 

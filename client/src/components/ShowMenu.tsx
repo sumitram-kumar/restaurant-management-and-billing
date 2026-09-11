@@ -14,12 +14,13 @@ import Navbar from "./Navbar";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import { useCatalog } from "../context/CatalogContext";
 import { deleteMenuItem } from "../api/menu";
+import { getErrorMessage } from "../api/errorMessage";
 
 const ShowMenu = () => {
   const navigate = useNavigate();
   const { menuItems, refreshMenu } = useCatalog();
 
-  const handleDelete = async (foodId, foodName) => {
+  const handleDelete = async (foodId: number, foodName: string) => {
     if (!window.confirm(`Are you sure? ${foodName} will be deleted!`)) return;
 
     try {
@@ -27,7 +28,7 @@ const ShowMenu = () => {
       toast.success(`${foodName} Deleted Successfully!`);
       await refreshMenu();
     } catch (error) {
-      toast.error(error.response?.data?.error ?? "Failed to delete item");
+      toast.error(getErrorMessage(error, "Failed to delete item"));
     }
   };
 

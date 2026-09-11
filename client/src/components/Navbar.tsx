@@ -9,7 +9,11 @@ import IconButton from "@mui/material/IconButton";
 import HomeIcon from "@mui/icons-material/Home";
 import { useAuth0 } from "@auth0/auth0-react";
 
-export default function ButtonAppBar({ showText }) {
+interface NavbarProps {
+  showText: string;
+}
+
+export default function ButtonAppBar({ showText }: NavbarProps) {
   const navigate = useNavigate();
   const { loginWithRedirect, logout, isAuthenticated } = useAuth0();
 
@@ -28,7 +32,6 @@ export default function ButtonAppBar({ showText }) {
               color="inherit"
               onClick={() => navigate("/home")}
               endIcon={<HomeIcon />}
-              align="left"
               className="left-home-btn"
             ></Button>
           </IconButton>

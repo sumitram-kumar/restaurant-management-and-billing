@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { toast } from "react-toastify";
 import "./styles/AddEditMenuItem.css";
 import Navbar from "./Navbar";
 import Paper from "@mui/material/Paper";
 import BottomNavigation from "@mui/material/BottomNavigation";
-import { getMenuItem, updateMenuItem } from "../api/menu";
 import { useCatalog } from "../context/CatalogContext";
+import { createMenuItem } from "../api/menu";
+import { getErrorMessage } from "../api/errorMessage";
 
-const EditMenuItem = () => {
+const AddMenuItem = () => {
   const navigate = useNavigate();
-  const { refreshMenu } = useCatalog();
-  const { food_id: foodId } = useParams();
+  const { menuItems, refreshMenu } = useCatalog();
 
   const [food, setFood] = useState({
     name: "",
@@ -23,48 +23,45 @@ const EditMenuItem = () => {
     fullPrice: "",
   });
 
-  useEffect(() => {
-    getMenuItem(Number(foodId)).then((item) =>
-      setFood({
-        name: item.name,
-        category: item.category,
-        halfPrice: item.halfPrice,
-        fullPrice: item.fullPrice,
-      })
-    );
-  }, [foodId]);
-
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFood((current) => ({ ...current, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!food.name || !food.category || !food.halfPrice || !food.fullPrice) {
       toast.error("Enter All Fields!");
       return;
     }
 
+    const alreadyExists = menuItems.some(
+      (item) => item.name.toLowerCase() === food.name.toLowerCase()
+    );
+    if (alreadyExists) {
+      toast.error("Item Already Exists!");
+      return;
+    }
+
     try {
-      await updateMenuItem(Number(foodId), {
+      await createMenuItem({
         name: food.name,
         category: food.category,
         halfPrice: Number(food.halfPrice),
         fullPrice: Number(food.fullPrice),
       });
-      toast.success("Successfully Updated!");
+      toast.success("Successfully Added!");
       await refreshMenu();
       navigate("/menu");
     } catch (error) {
-      toast.error(error.response?.data?.error ?? "Failed to update item");
+      toast.error(getErrorMessage(error, "Failed to add item"));
     }
   };
 
   return (
     <div>
       <div className="navbar">
-        <Navbar showText="EDIT ITEM" />
+        <Navbar showText="ADD ITEM" />
       </div>
       <div className="below-navbar">
         <Box
@@ -73,56 +70,52 @@ const EditMenuItem = () => {
           noValidate
           autoComplete="off"
         >
-          <div>
+          <div className="addmenutab">
             <TextField
               required
               id="outlined-required"
               label="Food Name"
               name="name"
-              value={food.name || ""}
               onChange={handleChange}
             />
           </div>
-          <div>
+          <div className="addmenutab">
             <TextField
               required
               id="outlined-required"
               label="Category"
               name="category"
-              value={food.category || ""}
               onChange={handleChange}
             />
           </div>
-          <div>
+          <div className="addmenutab">
             <TextField
               type="number"
               required
               id="outlined-required"
               label="Half Price"
               name="halfPrice"
-              value={food.halfPrice || ""}
               onChange={handleChange}
             />
           </div>
-          <div>
+          <div className="addmenutab">
             <TextField
               type="number"
               required
               id="outlined-required"
               label="Full Price"
               name="fullPrice"
-              value={food.fullPrice || ""}
               onChange={handleChange}
             />
           </div>
           <Button
-            className="addEditItem-btm"
             color="success"
             variant="contained"
             size="large"
+            className="addEditItem-btm"
             onClick={handleSubmit}
           >
-            UPDATE ITEM
+            ADD ITEM
           </Button>
         </Box>
       </div>
@@ -135,4 +128,4 @@ const EditMenuItem = () => {
   );
 };
 
-export default EditMenuItem;
+export default AddMenuItem;

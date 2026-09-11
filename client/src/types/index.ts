@@ -16,7 +16,12 @@ export interface MenuItem {
   updatedAt: string;
 }
 
-export type MenuItemInput = Omit<MenuItem, "id" | "isActive" | "createdAt" | "updatedAt">;
+export interface MenuItemInput {
+  name: string;
+  category: string;
+  halfPrice: number;
+  fullPrice: number;
+}
 
 export interface TaxRate {
   id?: number;
