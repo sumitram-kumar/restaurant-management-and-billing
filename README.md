@@ -1,10 +1,10 @@
-# Kalika Dhaba — Restaurant Management & Billing
+# Restaurant Management & Billing
 
 [![CI](https://github.com/sumitram-kumar/restaurant-management-and-billing/actions/workflows/ci.yml/badge.svg)](https://github.com/sumitram-kumar/restaurant-management-and-billing/actions/workflows/ci.yml)
 
 A billing and menu-management system for a small restaurant: staff log in, manage the menu, ring up an itemized invoice with discount and GST, and pull sales/tax reports over a date range.
 
-This project started as a college assignment and was later rebuilt end-to-end — TypeScript on both sides, a normalized Prisma/MySQL schema, real server-side authorization and bill computation, automated tests, and CI — as a portfolio piece.
+This project started as a college assignment and was later rebuilt end-to-end - TypeScript on both sides, a normalized Prisma/MySQL schema, real server-side authorization and bill computation, automated tests, and CI - as a portfolio piece.
 
 ## Architecture
 
@@ -18,12 +18,12 @@ api/      Express + TypeScript, Prisma ORM
           MySQL
 ```
 
-- **`api/`** — Express API in `src/`, organized by feature module (`modules/menu`, `modules/tax`, `modules/bills`, `modules/stats`), each with `routes -> controller -> service`. Zod validates every request; a centralized error handler maps validation/Prisma/auth errors to proper HTTP status codes; `express-oauth2-jwt-bearer` verifies Auth0 access tokens on everything under `/api`. See [`api/prisma/schema.prisma`](api/prisma/schema.prisma) for the data model.
-- **`client/`** — Create React App + TypeScript. `CatalogContext` and `BillContext` hold shared state (menu/tax data, the in-progress invoice draft) instead of the prop-drilling the original version used. `ProtectedRoute` gates every authenticated page via Auth0's `withAuthenticationRequired`. All API access goes through `src/api/*` — no component talks to `axios` or a hardcoded URL directly.
+- **`api/`** - Express API in `src/`, organized by feature module (`modules/menu`, `modules/tax`, `modules/bills`, `modules/stats`), each with `routes -> controller -> service`. Zod validates every request; a centralized error handler maps validation/Prisma/auth errors to proper HTTP status codes; `express-oauth2-jwt-bearer` verifies Auth0 access tokens on everything under `/api`. See [`api/prisma/schema.prisma`](api/prisma/schema.prisma) for the data model.
+- **`client/`** - Create React App + TypeScript. `CatalogContext` and `BillContext` hold shared state (menu/tax data, the in-progress invoice draft) instead of the prop-drilling the original version used. `ProtectedRoute` gates every authenticated page via Auth0's `withAuthenticationRequired`. All API access goes through `src/api/*` - no component talks to `axios` or a hardcoded URL directly.
 
 ### A design decision worth calling out
 
-In the original version, an invoice's subtotal/discount/tax/total were computed **in the browser** and only reached the database when the receipt was printed — meaning a skipped print silently lost the sale, and nothing stopped a modified request from submitting arbitrary amounts. The rewrite moved that computation server-side: the client sends only item IDs, quantities, a discount percentage, and a payment mode; the API looks up current prices and the active tax rate itself, computes the bill in a pure, unit-tested function ([`billCalculator.ts`](api/src/modules/bills/billCalculator.ts)), and persists it immediately on submission. `api/test/integration/bills.routes.test.ts` sends a request with a forged price/amount and asserts the server ignores it.
+In the original version, an invoice's subtotal/discount/tax/total were computed **in the browser** and only reached the database when the receipt was printed - meaning a skipped print silently lost the sale, and nothing stopped a modified request from submitting arbitrary amounts. The rewrite moved that computation server-side: the client sends only item IDs, quantities, a discount percentage, and a payment mode; the API looks up current prices and the active tax rate itself, computes the bill in a pure, unit-tested function ([`billCalculator.ts`](api/src/modules/bills/billCalculator.ts)), and persists it immediately on submission. `api/test/integration/bills.routes.test.ts` sends a request with a forged price/amount and asserts the server ignores it.
 
 ## Tech stack
 
@@ -58,8 +58,8 @@ docker compose up -d
 
 You need an Auth0 tenant with:
 
-1. An **Application** (Single Page Application) for login — gives you a `domain` and `clientId`.
-2. An **API** (Applications → APIs → Create API) — gives you an `Identifier`, used as the `audience`. The Identifier can be any unique string (e.g. `https://your-app-name-api`); it doesn't need to resolve to anything.
+1. An **Application** (Single Page Application) for login - gives you a `domain` and `clientId`.
+2. An **API** (Applications → APIs → Create API) - gives you an `Identifier`, used as the `audience`. The Identifier can be any unique string (e.g. `https://your-app-name-api`); it doesn't need to resolve to anything.
 
 ### 3. Backend
 
@@ -84,7 +84,7 @@ npm start                   # http://localhost:3000
 ## Testing
 
 ```bash
-# api — spins up against DATABASE_URL from api/.env.test (copy api/.env.test.example)
+# api - spins up against DATABASE_URL from api/.env.test (copy api/.env.test.example)
 cd api && npm test
 
 # client
@@ -95,15 +95,15 @@ Both `npm run lint` and `npm run typecheck` are available in each package and ru
 
 ## Known, deliberate gaps
 
-- **CRA, not Vite.** `client/` still uses `react-scripts`. Migrating build tooling is orthogonal to the goals of this rewrite (TypeScript, auth, data modeling, tests) and would add risk without adding anything the app needs — noted here rather than left as a silent gap. `react-scripts`' own dependency tree carries a number of `npm audit` findings (webpack-dev-server, etc.) that are all dev-tooling-only and don't ship in the production build.
+- **CRA, not Vite.** `client/` still uses `react-scripts`. Migrating build tooling is orthogonal to the goals of this rewrite (TypeScript, auth, data modeling, tests) and would add risk without adding anything the app needs - noted here rather than left as a silent gap. `react-scripts`' own dependency tree carries a number of `npm audit` findings (webpack-dev-server, etc.) that are all dev-tooling-only and don't ship in the production build.
 - **A moderate `qs` advisory via Express 4** has no fix currently published upstream that doesn't mean jumping to Express 5 (a breaking change out of scope here).
-- **Tax rate history has no UI.** The API stores every tax rate ever set (append-only, so historical bills stay correct against the rate that applied when they were created), but there's no screen to browse that history — `UpdateTax` only shows the current rate.
+- **Tax rate history has no UI.** The API stores every tax rate ever set (append-only, so historical bills stay correct against the rate that applied when they were created), but there's no screen to browse that history - `UpdateTax` only shows the current rate.
 
 ## Contributors
 
-- **Sumitram Kumar** — original application and this rewrite.
-- **Sumaitri Shikha** — contributed to the original version of this project, including the initial billing calculation logic and menu structure this rewrite builds on.
+- **Sumitram Kumar** - original application and this rewrite.
+- **Sumaitri Shikha** - contributed to the original version of this project, including the initial billing calculation logic and menu structure this rewrite builds on.
 
 ## License
 
-MIT — see [LICENSE.md](LICENSE.md).
+MIT - see [LICENSE.md](LICENSE.md).
