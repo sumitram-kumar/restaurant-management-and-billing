@@ -4,10 +4,11 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  // The app's runtime queries go through Supabase's connection pooler
-  // (many short-lived connections). Migrations need a direct, session-
-  // capable connection instead — the pooler doesn't support the advisory
-  // locks Prisma Migrate uses to prevent concurrent migrations. Locally,
+  // The app's runtime queries go through Supabase's transaction-mode
+  // pooler (many short-lived connections). Migrations need a session-
+  // capable connection instead — the transaction pooler doesn't preserve
+  // session state across statements, which breaks the advisory lock
+  // Prisma Migrate takes out to serialize concurrent migrations. Locally,
   // both env vars point at the same non-pooled Postgres instance.
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")

@@ -108,8 +108,8 @@ To stand this up from scratch:
 
 1. **Database** — create a [Supabase](https://supabase.com) project. You need two connection strings from Project Settings → Database → Connection string → URI:
    - the **Transaction pooler** (port 6543) as `DATABASE_URL` — what the running app queries through.
-   - the **Direct connection** (port 5432, `db.<project>.supabase.co` host) as `DIRECT_URL` — what `prisma migrate` uses. Supabase's pooler doesn't support the advisory locks Prisma Migrate needs to serialize concurrent migrations, so this has to be the unpooled connection.
-2. **Backend** — on [Render](https://render.com), New → Blueprint, point it at this repo (it reads `render.yaml`). When prompted, paste both connection strings from step 1 into `DATABASE_URL` and `DIRECT_URL`. After the first deploy succeeds, run `npx prisma db seed` once with `DATABASE_URL` set to the direct connection to populate sample menu items.
+   - the **Session pooler** (same pooler host, port 5432) as `DIRECT_URL` — what `prisma migrate` uses. The transaction pooler doesn't preserve session state across statements, which breaks the advisory lock Migrate takes out to serialize concurrent migrations; the session-mode pooler doesn't have that problem.
+2. **Backend** — on [Render](https://render.com), New → Blueprint, point it at this repo (it reads `render.yaml`). When prompted, paste both connection strings from step 1 into `DATABASE_URL` and `DIRECT_URL`. After the first deploy succeeds, run `npx prisma db seed` once with `DATABASE_URL` set to the session pooler connection to populate sample menu items.
 3. **Frontend** — in this repo's Settings → Pages, set Source to "GitHub Actions". In Settings → Secrets and variables → Actions → Variables, add `REACT_APP_API_BASE_URL` pointing at the Render URL from step 2, then re-run the `Deploy frontend to GitHub Pages` workflow.
 4. **Auth0** — in the existing Application's settings, add the GitHub Pages URL to Allowed Callback URLs, Allowed Logout URLs, and Allowed Web Origins.
 
