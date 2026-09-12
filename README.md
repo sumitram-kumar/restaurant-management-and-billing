@@ -4,7 +4,7 @@
 
 A billing and menu-management system for a small restaurant: staff log in, manage the menu, ring up an itemized invoice with discount and GST, and pull sales/tax reports over a date range.
 
-This project started as a college assignment and was later rebuilt end-to-end - TypeScript on both sides, a normalized Prisma/MySQL schema, real server-side authorization and bill computation, automated tests, and CI - as a portfolio piece.
+This project started as a college assignment and was later rebuilt end-to-end - TypeScript on both sides, a normalized Prisma/Postgres schema, real server-side authorization and bill computation, automated tests, and CI - as a portfolio piece.
 
 ## Architecture
 
@@ -15,7 +15,7 @@ client/   React 18 + TypeScript, MUI, Auth0 SPA login
 api/      Express + TypeScript, Prisma ORM
               |
               v
-          MySQL
+          PostgreSQL
 ```
 
 - **`api/`** - Express API in `src/`, organized by feature module (`modules/menu`, `modules/tax`, `modules/bills`, `modules/stats`), each with `routes -> controller -> service`. Zod validates every request; a centralized error handler maps validation/Prisma/auth errors to proper HTTP status codes; `express-oauth2-jwt-bearer` verifies Auth0 access tokens on everything under `/api`. See [`api/prisma/schema.prisma`](api/prisma/schema.prisma) for the data model.
@@ -31,7 +31,7 @@ In the original version, an invoice's subtotal/discount/tax/total were computed 
 |---|---|
 | **Frontend** | React 18, TypeScript, MUI, React Router, Auth0 React SDK, Axios |
 | **Backend** | Node.js, Express, TypeScript, Prisma, Zod, Pino |
-| **Database** | MySQL 8 |
+| **Database** | PostgreSQL 16 |
 | **Auth** | Auth0 (Authorization Code + PKCE on the frontend, JWT bearer verification on the API) |
 | **Testing** | Vitest + Supertest (API), Jest + React Testing Library (client) |
 | **CI** | GitHub Actions |
@@ -40,12 +40,13 @@ In the original version, an invoice's subtotal/discount/tax/total were computed 
 
 ### 1. Database
 
-Either run MySQL directly:
+Either run Postgres directly:
 
 ```bash
-brew install mysql
-brew services start mysql
-mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'devpassword'; CREATE DATABASE billing; CREATE DATABASE billing_test;"
+brew install postgresql@16
+brew services start postgresql@16
+createdb billing
+createdb billing_test
 ```
 
 or via Docker Compose (also what CI effectively mirrors):
