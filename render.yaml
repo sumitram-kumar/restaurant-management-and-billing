@@ -17,9 +17,9 @@ services:
       - key: CORS_ORIGIN
         value: https://sumitram-kumar.github.io
       - key: AUTH0_AUDIENCE
-        value: https://kalika-billing-api
+        value: restaurant-management-and-billing-api
       - key: AUTH0_ISSUER_BASE_URL
-        value: https://dev-el261mjk5znyjcrw.us.auth0.com/
+        value: https://dev-e7c1h1ql5eh1r7w8.us.auth0.com/
       - key: LOG_LEVEL
         value: info
       - key: NODE_ENV

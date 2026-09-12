@@ -29,8 +29,8 @@ jobs:
       DIRECT_URL: postgresql://postgres:postgres@127.0.0.1:5432/billing_test
       PORT: 5000
       CORS_ORIGIN: http://localhost:3000
-      AUTH0_AUDIENCE: https://kalika-billing-api
-      AUTH0_ISSUER_BASE_URL: https://dev-el261mjk5znyjcrw.us.auth0.com/
+      AUTH0_AUDIENCE: restaurant-management-and-billing-api
+      AUTH0_ISSUER_BASE_URL: https://dev-e7c1h1ql5eh1r7w8.us.auth0.com/
       LOG_LEVEL: silent
     steps:
       - uses: actions/checkout@v4
@@ -53,9 +53,9 @@ jobs:
         working-directory: client
     env:
       REACT_APP_API_BASE_URL: http://localhost:5000
-      REACT_APP_AUTH0_DOMAIN: dev-el261mjk5znyjcrw.us.auth0.com
-      REACT_APP_AUTH0_CLIENT_ID: XIySZrShLjWSjiA44eT7NSqwm5O27exQ
-      REACT_APP_AUTH0_AUDIENCE: https://kalika-billing-api
+      REACT_APP_AUTH0_DOMAIN: dev-e7c1h1ql5eh1r7w8.us.auth0.com
+      REACT_APP_AUTH0_CLIENT_ID: ENc2HGlyRcst2D3A344TaXFVU00N3pv5
+      REACT_APP_AUTH0_AUDIENCE: restaurant-management-and-billing-api
       CI: true
     steps:
       - uses: actions/checkout@v4

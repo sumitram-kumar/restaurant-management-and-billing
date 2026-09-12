@@ -27,9 +27,9 @@ jobs:
       # Set once the backend is deployed: repo Settings > Secrets and
       # variables > Actions > Variables > New repository variable.
       REACT_APP_API_BASE_URL: ${{ vars.REACT_APP_API_BASE_URL }}
-      REACT_APP_AUTH0_DOMAIN: dev-el261mjk5znyjcrw.us.auth0.com
-      REACT_APP_AUTH0_CLIENT_ID: XIySZrShLjWSjiA44eT7NSqwm5O27exQ
-      REACT_APP_AUTH0_AUDIENCE: https://kalika-billing-api
+      REACT_APP_AUTH0_DOMAIN: dev-e7c1h1ql5eh1r7w8.us.auth0.com
+      REACT_APP_AUTH0_CLIENT_ID: ENc2HGlyRcst2D3A344TaXFVU00N3pv5
+      REACT_APP_AUTH0_AUDIENCE: restaurant-management-and-billing-api
       CI: true
     steps:
       - uses: actions/checkout@v4
