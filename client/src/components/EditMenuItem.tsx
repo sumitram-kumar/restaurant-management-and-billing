@@ -3,11 +3,10 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import CircularProgress from "@mui/material/CircularProgress";
 import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import { toast } from "react-toastify";
 import { getMenuItem, updateMenuItem } from "../api/menu";
@@ -70,95 +69,95 @@ const EditMenuItem = () => {
     }
   };
 
+  const isDisabled = isSubmitting || isLoadingItem;
+
   return (
-    <Box sx={{ maxWidth: 520 }}>
-      <Typography variant="h5" fontWeight={800} gutterBottom>
-        Edit Menu Item
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+    <Box sx={{ maxWidth: 480 }}>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         Update this dish's details.
       </Typography>
+      <Divider sx={{ mb: 4 }} />
 
-      <Card>
-        <CardContent sx={{ p: 3 }}>
-          {isLoadingItem ? (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-              <Skeleton height={56} />
-              <Skeleton height={56} />
-              <Box sx={{ display: "flex", gap: 2 }}>
-                <Skeleton height={56} sx={{ flex: 1 }} />
-                <Skeleton height={56} sx={{ flex: 1 }} />
-              </Box>
-            </Box>
-          ) : (
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
+      {isLoadingItem ? (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <Skeleton height={56} />
+          <Skeleton height={56} />
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Skeleton height={56} sx={{ flex: 1 }} />
+            <Skeleton height={56} sx={{ flex: 1 }} />
+          </Box>
+        </Box>
+      ) : (
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+        >
+          <TextField
+            required
+            fullWidth
+            label="Food Name"
+            name="name"
+            value={food.name || ""}
+            disabled={isDisabled}
+            onChange={handleChange}
+          />
+          <TextField
+            required
+            fullWidth
+            label="Category"
+            name="category"
+            value={food.category || ""}
+            disabled={isDisabled}
+            onChange={handleChange}
+          />
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <TextField
+              type="number"
+              required
+              fullWidth
+              label="Half Price"
+              name="halfPrice"
+              value={food.halfPrice || ""}
+              disabled={isDisabled}
+              onChange={handleChange}
+            />
+            <TextField
+              type="number"
+              required
+              fullWidth
+              label="Full Price"
+              name="fullPrice"
+              value={food.fullPrice || ""}
+              disabled={isDisabled}
+              onChange={handleChange}
+            />
+          </Box>
+          <Box sx={{ display: "flex", gap: 1.5, justifyContent: "flex-end", mt: 1 }}>
+            <Button
+              variant="text"
+              onClick={() => navigate("/menu")}
+              disabled={isDisabled}
             >
-              <TextField
-                required
-                fullWidth
-                label="Food Name"
-                name="name"
-                value={food.name || ""}
-                onChange={handleChange}
-              />
-              <TextField
-                required
-                fullWidth
-                label="Category"
-                name="category"
-                value={food.category || ""}
-                onChange={handleChange}
-              />
-              <Box sx={{ display: "flex", gap: 2 }}>
-                <TextField
-                  type="number"
-                  required
-                  fullWidth
-                  label="Half Price"
-                  name="halfPrice"
-                  value={food.halfPrice || ""}
-                  onChange={handleChange}
-                />
-                <TextField
-                  type="number"
-                  required
-                  fullWidth
-                  label="Full Price"
-                  name="fullPrice"
-                  value={food.fullPrice || ""}
-                  onChange={handleChange}
-                />
-              </Box>
-              <Box sx={{ display: "flex", gap: 1.5, justifyContent: "flex-end", mt: 1 }}>
-                <Button
-                  variant="text"
-                  onClick={() => navigate("/menu")}
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={isSubmitting}
-                  endIcon={
-                    isSubmitting ? (
-                      <CircularProgress size={16} color="inherit" />
-                    ) : (
-                      <SaveRoundedIcon />
-                    )
-                  }
-                >
-                  {isSubmitting ? "Saving..." : "Save Changes"}
-                </Button>
-              </Box>
-            </Box>
-          )}
-        </CardContent>
-      </Card>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isDisabled}
+              endIcon={
+                isSubmitting ? (
+                  <CircularProgress size={16} color="inherit" />
+                ) : (
+                  <SaveRoundedIcon />
+                )
+              }
+            >
+              {isSubmitting ? "Saving..." : "Save Changes"}
+            </Button>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };

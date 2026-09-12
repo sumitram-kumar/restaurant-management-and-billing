@@ -2,40 +2,29 @@ import { ReactNode, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import Box from "@mui/material/Box";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
+import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import Tooltip from "@mui/material/Tooltip";
-import Avatar from "@mui/material/Avatar";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
-import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
-import ReceiptLongRoundedIcon from "@mui/icons-material/ReceiptLongRounded";
-import RestaurantMenuRoundedIcon from "@mui/icons-material/RestaurantMenuRounded";
-import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
-import PercentRoundedIcon from "@mui/icons-material/PercentRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
-import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
 import { useColorMode } from "../context/ColorModeContext";
 
-const DRAWER_WIDTH = 248;
-
 const NAV_ITEMS = [
-  { label: "Dashboard", path: "/home", icon: <DashboardRoundedIcon /> },
-  { label: "Invoice", path: "/invoice", icon: <ReceiptLongRoundedIcon /> },
-  { label: "Menu", path: "/menu", icon: <RestaurantMenuRoundedIcon /> },
-  { label: "Stats", path: "/showStats", icon: <InsightsRoundedIcon /> },
-  { label: "Tax", path: "/tax", icon: <PercentRoundedIcon /> },
+  { label: "Dashboard", path: "/home" },
+  { label: "Invoice", path: "/invoice" },
+  { label: "Menu", path: "/menu" },
+  { label: "Stats", path: "/showStats" },
+  { label: "Tax", path: "/tax" },
 ];
 
 interface AppShellProps {
@@ -46,156 +35,150 @@ interface AppShellProps {
 export function AppShell({ title, children }: AppShellProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout, user } = useAuth0();
+  const { logout } = useAuth0();
   const { mode, toggleMode } = useColorMode();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const drawerContent = (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, px: 2.5, py: 2.5 }}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 36,
-            height: 36,
-            borderRadius: 2,
-            bgcolor: "primary.main",
-            color: "primary.contrastText",
-          }}
-        >
-          <StorefrontRoundedIcon fontSize="small" />
-        </Box>
-        <Typography variant="subtitle1" fontWeight={800} noWrap>
-          Restaurant Billing
-        </Typography>
-      </Box>
-      <List sx={{ px: 1.5, flexGrow: 1 }}>
-        {NAV_ITEMS.map((item) => {
-          const selected = location.pathname.toLowerCase() === item.path.toLowerCase();
-          return (
-            <ListItemButton
-              key={item.path}
-              selected={selected}
-              onClick={() => {
-                navigate(item.path);
-                setMobileOpen(false);
-              }}
-              sx={{
-                borderRadius: 2,
-                mb: 0.5,
-                "&.Mui-selected": {
-                  bgcolor: "primary.main",
-                  color: "primary.contrastText",
-                  "& .MuiListItemIcon-root": { color: "primary.contrastText" },
-                  "&:hover": { bgcolor: "primary.main" },
-                },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 36 }}>{item.icon}</ListItemIcon>
-              <ListItemText
-                primary={item.label}
-                primaryTypographyProps={{ fontWeight: selected ? 700 : 500 }}
-              />
-            </ListItemButton>
-          );
-        })}
-      </List>
-      <Divider />
-      <Box sx={{ p: 1.5 }}>
-        <ListItemButton
-          onClick={() =>
-            logout({
-              // Same reasoning as the login redirect_uri: on a GitHub Pages
-              // project site the app lives under a subpath, which
-              // window.location.origin alone doesn't include.
-              logoutParams: {
-                returnTo: window.location.origin + process.env.PUBLIC_URL,
-              },
-            })
-          }
-          sx={{ borderRadius: 2 }}
-        >
-          <ListItemIcon sx={{ minWidth: 36 }}>
-            <LogoutRoundedIcon />
-          </ListItemIcon>
-          <ListItemText primary="Logout" />
-        </ListItemButton>
-      </Box>
-    </Box>
-  );
+  const isActive = (path: string) =>
+    location.pathname.toLowerCase() === path.toLowerCase();
+
+  const handleLogout = () =>
+    logout({
+      logoutParams: { returnTo: window.location.origin + process.env.PUBLIC_URL },
+    });
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "background.default" }}>
-      {isDesktop ? (
-        <Drawer
-          variant="permanent"
-          className="no-print"
+    <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
+      <Box
+        component="header"
+        className="no-print"
+        sx={{
+          borderBottom: "3px solid",
+          borderColor: "primary.main",
+          bgcolor: "background.paper",
+        }}
+      >
+        <Container maxWidth="lg">
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              py: 2,
+              gap: 2,
+            }}
+          >
+            <Typography
+              variant="h6"
+              onClick={() => navigate("/home")}
+              sx={{
+                fontFamily: '"Fraunces", serif',
+                fontWeight: 700,
+                cursor: "pointer",
+                flexShrink: 0,
+                fontSize: { xs: 20, sm: 24 },
+              }}
+            >
+              Restaurant Billing
+            </Typography>
+
+            {isDesktop && (
+              <Box component="nav" sx={{ display: "flex", gap: 3.5 }}>
+                {NAV_ITEMS.map((item) => (
+                  <Box
+                    key={item.path}
+                    component="button"
+                    onClick={() => navigate(item.path)}
+                    sx={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      p: 0,
+                      fontFamily: "inherit",
+                      fontSize: 15,
+                      fontWeight: isActive(item.path) ? 700 : 500,
+                      color: isActive(item.path) ? "primary.main" : "text.primary",
+                      borderBottom: "2px solid",
+                      borderColor: isActive(item.path) ? "primary.main" : "transparent",
+                      pb: 0.5,
+                      transition: "color 0.15s, border-color 0.15s",
+                      "&:hover": { color: "primary.main" },
+                    }}
+                  >
+                    {item.label}
+                  </Box>
+                ))}
+              </Box>
+            )}
+
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flexShrink: 0 }}>
+              <Tooltip title={mode === "light" ? "Dark mode" : "Light mode"}>
+                <IconButton onClick={toggleMode} size="small">
+                  {mode === "light" ? (
+                    <DarkModeRoundedIcon fontSize="small" />
+                  ) : (
+                    <LightModeRoundedIcon fontSize="small" />
+                  )}
+                </IconButton>
+              </Tooltip>
+              {isDesktop ? (
+                <Tooltip title="Log out">
+                  <IconButton onClick={handleLogout} size="small">
+                    <LogoutRoundedIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <IconButton onClick={() => setMobileOpen(true)} size="small">
+                  <MenuIcon />
+                </IconButton>
+              )}
+            </Box>
+          </Box>
+        </Container>
+      </Box>
+
+      <Drawer anchor="right" open={mobileOpen} onClose={() => setMobileOpen(false)}>
+        <Box sx={{ width: 240, pt: 1 }} role="presentation">
+          <List>
+            {NAV_ITEMS.map((item) => (
+              <ListItemButton
+                key={item.path}
+                selected={isActive(item.path)}
+                onClick={() => {
+                  navigate(item.path);
+                  setMobileOpen(false);
+                }}
+              >
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{ fontWeight: isActive(item.path) ? 700 : 500 }}
+                />
+              </ListItemButton>
+            ))}
+          </List>
+          <Divider />
+          <List>
+            <ListItemButton onClick={handleLogout}>
+              <ListItemText primary="Log out" />
+            </ListItemButton>
+          </List>
+        </Box>
+      </Drawer>
+
+      <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 5 } }}>
+        <Typography
+          variant="h3"
           sx={{
-            width: DRAWER_WIDTH,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
-              width: DRAWER_WIDTH,
-              boxSizing: "border-box",
-              borderRight: "1px solid",
-              borderColor: "divider",
-            },
+            fontSize: { xs: 28, sm: 34 },
+            mb: { xs: 3, sm: 4 },
           }}
         >
-          {drawerContent}
-        </Drawer>
-      ) : (
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={() => setMobileOpen(false)}
-          ModalProps={{ keepMounted: true }}
-          sx={{ "& .MuiDrawer-paper": { width: DRAWER_WIDTH, boxSizing: "border-box" } }}
-        >
-          {drawerContent}
-        </Drawer>
-      )}
-
-      <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-        <AppBar
-          position="sticky"
-          color="transparent"
-          className="no-print"
-          sx={{ bgcolor: "background.paper" }}
-        >
-          <Toolbar sx={{ gap: 1 }}>
-            {!isDesktop && (
-              <IconButton edge="start" onClick={() => setMobileOpen(true)}>
-                <MenuIcon />
-              </IconButton>
-            )}
-            <Typography variant="h6" fontWeight={700} sx={{ flexGrow: 1 }} noWrap>
-              {title}
-            </Typography>
-            <Tooltip
-              title={mode === "light" ? "Switch to dark mode" : "Switch to light mode"}
-            >
-              <IconButton onClick={toggleMode}>
-                {mode === "light" ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
-              </IconButton>
-            </Tooltip>
-            {user?.picture ? (
-              <Avatar src={user.picture} sx={{ width: 32, height: 32 }} />
-            ) : (
-              <Avatar sx={{ width: 32, height: 32 }}>
-                {(user?.name ?? "?").charAt(0).toUpperCase()}
-              </Avatar>
-            )}
-          </Toolbar>
-        </AppBar>
-
-        <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, sm: 3, md: 4 } }}>
-          {children}
-        </Box>
-      </Box>
+          {title}
+        </Typography>
+        {children}
+      </Container>
     </Box>
   );
 }

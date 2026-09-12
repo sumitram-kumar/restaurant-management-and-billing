@@ -20,7 +20,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -54,6 +53,8 @@ const Invoice = () => {
   const [discount, setDiscount] = useState("");
   const [paymentMode, setPaymentMode] = useState<PaymentMode | "">("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isBusy = isCatalogLoading || isSubmitting;
 
   const handleAdd = () => {
     if (!foodName || !quantityType || !quantity) {
@@ -129,31 +130,28 @@ const Invoice = () => {
 
   return (
     <Box>
-      <Typography variant="h5" fontWeight={800} gutterBottom>
-        New Invoice
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         Add items to the order, then finish to save and print.
       </Typography>
 
       <Box
         sx={{
           display: "grid",
-          gap: 3,
-          gridTemplateColumns: { xs: "1fr", md: "380px 1fr" },
+          gap: 4,
+          gridTemplateColumns: { xs: "1fr", md: "360px 1fr" },
           alignItems: "start",
         }}
       >
-        <Card>
-          <CardContent sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2.5 }}>
-            <Typography variant="subtitle1" fontWeight={700}>
-              Add Item
-            </Typography>
+        <Box>
+          <Typography variant="overline" color="text.secondary">
+            Add item
+          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, mt: 1.5 }}>
             <TextField
               select
               label={isCatalogLoading ? "Loading menu..." : "Item"}
               value={foodName}
-              disabled={isCatalogLoading}
+              disabled={isBusy}
               onChange={(e) => setFoodName(e.target.value)}
               fullWidth
             >
@@ -164,7 +162,7 @@ const Invoice = () => {
               ))}
             </TextField>
 
-            <FormControl>
+            <FormControl disabled={isBusy}>
               <FormLabel sx={{ fontSize: 13, mb: 0.5 }}>Portion</FormLabel>
               <RadioGroup
                 row
@@ -196,12 +194,14 @@ const Invoice = () => {
               value={quantity}
               type="number"
               fullWidth
+              disabled={isBusy}
               onChange={(e) => setQuantity(e.target.value)}
             />
 
             <Button
-              variant="contained"
+              variant="outlined"
               onClick={handleAdd}
+              disabled={isBusy}
               startIcon={<PostAddTwoToneIcon />}
             >
               Add to Order
@@ -209,8 +209,8 @@ const Invoice = () => {
 
             <Divider sx={{ my: 0.5 }} />
 
-            <Typography variant="subtitle1" fontWeight={700}>
-              Finish Invoice
+            <Typography variant="overline" color="text.secondary">
+              Finish invoice
             </Typography>
             <TextField
               error={Number(discount) < 0}
@@ -219,6 +219,7 @@ const Invoice = () => {
               value={discount}
               type="number"
               fullWidth
+              disabled={isBusy}
               onChange={(e) => setDiscount(e.target.value)}
             />
             <TextField
@@ -226,6 +227,7 @@ const Invoice = () => {
               label="Payment Mode"
               value={paymentMode}
               fullWidth
+              disabled={isBusy}
               onChange={(e) => setPaymentMode(e.target.value as PaymentMode)}
             >
               {PAYMENT_MODES.map((mode) => (
@@ -235,10 +237,9 @@ const Invoice = () => {
               ))}
             </TextField>
             <Button
-              variant="outlined"
-              color="success"
+              variant="contained"
               onClick={handleFinish}
-              disabled={isSubmitting}
+              disabled={isBusy}
               startIcon={
                 isSubmitting ? (
                   <CircularProgress size={16} color="inherit" />
@@ -249,73 +250,70 @@ const Invoice = () => {
             >
               {isSubmitting ? "Saving..." : "Finish & Print"}
             </Button>
-          </CardContent>
-        </Card>
+          </Box>
+        </Box>
 
         <Card>
-          <CardContent sx={{ p: 0 }}>
-            <TableContainer sx={{ maxHeight: "55vh" }}>
-              <Table stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Item</TableCell>
-                    <TableCell align="right">Qty</TableCell>
-                    <TableCell align="right">Rate</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right" />
+          <TableContainer sx={{ maxHeight: "55vh" }}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Item</TableCell>
+                  <TableCell align="right">Qty</TableCell>
+                  <TableCell align="right">Rate</TableCell>
+                  <TableCell align="right">Amount</TableCell>
+                  <TableCell align="right" />
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {draftLines.map((line, i) => (
+                  <TableRow key={i} hover>
+                    <TableCell sx={{ fontWeight: 600 }}>
+                      {`${line.foodName} (${line.quantityType === "HALF" ? "H" : "F"})`}
+                    </TableCell>
+                    <TableCell align="right">{line.quantity}</TableCell>
+                    <TableCell align="right">{`₹${line.unitPrice}`}</TableCell>
+                    <TableCell align="right">{`₹${line.amount}`}</TableCell>
+                    <TableCell align="right">
+                      <IconButton
+                        size="small"
+                        color="error"
+                        disabled={isBusy}
+                        onClick={() => removeLine(i)}
+                      >
+                        <DeleteOutlineRoundedIcon fontSize="small" />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {draftLines.map((line, i) => (
-                    <TableRow key={i} hover>
-                      <TableCell sx={{ fontWeight: 600 }}>
-                        {`${line.foodName} (${line.quantityType === "HALF" ? "H" : "F"})`}
-                      </TableCell>
-                      <TableCell align="right">{line.quantity}</TableCell>
-                      <TableCell align="right">{`₹${line.unitPrice}`}</TableCell>
-                      <TableCell align="right">{`₹${line.amount}`}</TableCell>
-                      <TableCell align="right">
-                        <IconButton
-                          size="small"
-                          color="error"
-                          onClick={() => removeLine(i)}
-                        >
-                          <DeleteOutlineRoundedIcon fontSize="small" />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {draftLines.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
-                        <ReceiptLongRoundedIcon
-                          sx={{ fontSize: 40, color: "text.disabled", mb: 1 }}
-                        />
-                        <Typography color="text.secondary">
-                          No items added yet.
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            {draftLines.length > 0 && (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  gap: 1,
-                  p: 2,
-                  borderTop: "1px solid",
-                  borderColor: "divider",
-                }}
-              >
-                <Typography color="text.secondary">Subtotal:</Typography>
-                <Typography fontWeight={700}>{`₹${subtotal.toFixed(2)}`}</Typography>
-              </Box>
-            )}
-          </CardContent>
+                ))}
+                {draftLines.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
+                      <ReceiptLongRoundedIcon
+                        sx={{ fontSize: 40, color: "text.disabled", mb: 1 }}
+                      />
+                      <Typography color="text.secondary">No items added yet.</Typography>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {draftLines.length > 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 1,
+                p: 2,
+                borderTop: "1px solid",
+                borderColor: "divider",
+              }}
+            >
+              <Typography color="text.secondary">Subtotal:</Typography>
+              <Typography fontWeight={700}>{`₹${subtotal.toFixed(2)}`}</Typography>
+            </Box>
+          )}
         </Card>
       </Box>
     </Box>

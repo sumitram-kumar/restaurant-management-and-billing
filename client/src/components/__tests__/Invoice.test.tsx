@@ -57,6 +57,10 @@ describe("Invoice", () => {
   it("shows a validation error when adding with no fields filled", async () => {
     renderInvoice();
 
+    // "Add to Order" is disabled while the catalog is loading, so wait for
+    // that to finish before trying to click it, same as a real user would
+    // have to.
+    await screen.findByLabelText("Item");
     await userEvent.click(screen.getByRole("button", { name: /add to order/i }));
 
     expect(toast.error).toHaveBeenCalledWith("Enter All Fields!");

@@ -12,10 +12,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
 import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { getStats } from "../api/stats";
@@ -61,89 +61,95 @@ const Stats = () => {
 
   return (
     <Box>
-      <Typography variant="h5" fontWeight={800} gutterBottom>
-        Sales & Tax Stats
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         Pick a date range to see item-wise sales and totals.
       </Typography>
 
-      <Card sx={{ mb: 3 }}>
-        <CardContent sx={{ p: 3 }}>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-              flexWrap: "wrap",
-              alignItems: "center",
-            }}
-          >
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DesktopDatePicker
-                label="From"
-                inputFormat="YYYY-MM-DD"
-                value={fromDate}
-                onChange={setFromDate}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </LocalizationProvider>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DesktopDatePicker
-                label="To"
-                inputFormat="YYYY-MM-DD"
-                value={toDate}
-                onChange={setToDate}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </LocalizationProvider>
-            <Button
-              variant="contained"
-              disabled={isLoading}
-              startIcon={
-                isLoading ? (
-                  <CircularProgress size={16} color="inherit" />
-                ) : (
-                  <SearchRoundedIcon />
-                )
-              }
-              onClick={handleShow}
-            >
-              {isLoading ? "Loading..." : "Show"}
-            </Button>
-          </Box>
-        </CardContent>
-      </Card>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          flexWrap: "wrap",
+          alignItems: "center",
+          mb: 4,
+        }}
+      >
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DesktopDatePicker
+            label="From"
+            inputFormat="YYYY-MM-DD"
+            value={fromDate}
+            disabled={isLoading}
+            onChange={setFromDate}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DesktopDatePicker
+            label="To"
+            inputFormat="YYYY-MM-DD"
+            value={toDate}
+            disabled={isLoading}
+            onChange={setToDate}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+        <Button
+          variant="contained"
+          disabled={isLoading}
+          startIcon={
+            isLoading ? (
+              <CircularProgress size={16} color="inherit" />
+            ) : (
+              <SearchRoundedIcon />
+            )
+          }
+          onClick={handleShow}
+        >
+          {isLoading ? "Loading..." : "Show"}
+        </Button>
+      </Box>
 
       {!stats && !isLoading && (
-        <Box sx={{ textAlign: "center", py: 8 }}>
-          <InsightsRoundedIcon sx={{ fontSize: 48, color: "text.disabled", mb: 1 }} />
-          <Typography color="text.secondary">
-            Pick a date range and click Show to see results.
-          </Typography>
+        <>
+          <Divider sx={{ mb: 4 }} />
+          <Box sx={{ textAlign: "center", py: 6 }}>
+            <InsightsRoundedIcon sx={{ fontSize: 40, color: "text.disabled", mb: 1 }} />
+            <Typography color="text.secondary">
+              Pick a date range and click Show to see results.
+            </Typography>
+          </Box>
+        </>
+      )}
+
+      {isLoading && (
+        <Box sx={{ textAlign: "center", py: 6 }}>
+          <CircularProgress size={28} />
         </Box>
       )}
 
-      {stats && (
+      {stats && !isLoading && (
         <>
+          <Divider sx={{ mb: 4 }} />
           <Box
             sx={{
-              display: "grid",
-              gap: 2,
-              gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(4, 1fr)" },
-              mb: 3,
+              display: "flex",
+              gap: 5,
+              mb: 4,
+              flexWrap: "wrap",
             }}
           >
             {SUMMARY_TILES.map((tile) => (
-              <Card key={tile.key}>
-                <CardContent sx={{ p: 2.5 }}>
-                  <Typography variant="overline" color="text.secondary">
-                    {tile.label}
-                  </Typography>
-                  <Typography variant="h6" fontWeight={800}>
-                    {`₹${money(stats.totals[tile.key])}`}
-                  </Typography>
-                </CardContent>
-              </Card>
+              <Box key={tile.key}>
+                <Typography variant="overline" color="text.secondary">
+                  {tile.label}
+                </Typography>
+                <Typography
+                  sx={{ fontFamily: '"Fraunces", serif', fontSize: 32, fontWeight: 600 }}
+                >
+                  {`₹${money(stats.totals[tile.key])}`}
+                </Typography>
+              </Box>
             ))}
           </Box>
 

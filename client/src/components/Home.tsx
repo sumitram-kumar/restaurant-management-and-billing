@@ -1,53 +1,33 @@
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import CardActionArea from "@mui/material/CardActionArea";
-import CardContent from "@mui/material/CardContent";
-import Avatar from "@mui/material/Avatar";
-import ReceiptLongRoundedIcon from "@mui/icons-material/ReceiptLongRounded";
-import RestaurantMenuRoundedIcon from "@mui/icons-material/RestaurantMenuRounded";
-import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
-import PercentRoundedIcon from "@mui/icons-material/PercentRounded";
-import { ComponentType } from "react";
-import { SvgIconProps } from "@mui/material/SvgIcon";
+import Divider from "@mui/material/Divider";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 
-interface Tile {
-  label: string;
-  description: string;
-  path: string;
-  icon: ComponentType<SvgIconProps>;
-  color: "primary" | "success" | "warning" | "info";
-}
-
-const TILES: Tile[] = [
+const ITEMS = [
   {
+    n: "01",
     label: "New Invoice",
     description: "Ring up an order and print a receipt",
     path: "/invoice",
-    icon: ReceiptLongRoundedIcon,
-    color: "primary",
   },
   {
+    n: "02",
     label: "Menu",
     description: "Manage items, categories and prices",
     path: "/menu",
-    icon: RestaurantMenuRoundedIcon,
-    color: "success",
   },
   {
+    n: "03",
     label: "Stats",
     description: "Sales and tax reports over a date range",
     path: "/showStats",
-    icon: InsightsRoundedIcon,
-    color: "info",
   },
   {
+    n: "04",
     label: "Tax",
     description: "Update the current CGST / SGST rate",
     path: "/tax",
-    icon: PercentRoundedIcon,
-    color: "warning",
   },
 ];
 
@@ -56,51 +36,70 @@ const Home = () => {
 
   return (
     <Box>
-      <Typography variant="h5" fontWeight={800} gutterBottom>
-        Welcome back
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 480 }}>
         Pick up where you left off, or start a new invoice.
       </Typography>
 
-      <Box
-        sx={{
-          display: "grid",
-          gap: 2.5,
-          gridTemplateColumns: {
-            xs: "1fr",
-            sm: "repeat(2, 1fr)",
-            lg: "repeat(4, 1fr)",
-          },
-        }}
-      >
-        {TILES.map((tile) => (
-          <Card key={tile.path}>
-            <CardActionArea onClick={() => navigate(tile.path)} sx={{ height: "100%" }}>
-              <CardContent sx={{ p: 3 }}>
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    bgcolor: `${tile.color}.main`,
-                    color: `${tile.color}.contrastText`,
-                    width: 44,
-                    height: 44,
-                    mb: 2,
-                  }}
-                >
-                  <tile.icon />
-                </Avatar>
-                <Typography variant="subtitle1" fontWeight={700} gutterBottom>
-                  {tile.label}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {tile.description}
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        ))}
-      </Box>
+      <Divider sx={{ borderColor: "text.primary", opacity: 0.2 }} />
+      {ITEMS.map((item) => (
+        <Box key={item.path}>
+          <Box
+            component="button"
+            onClick={() => navigate(item.path)}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              textAlign: "left",
+              py: { xs: 2.5, sm: 3.5 },
+              gap: { xs: 2, sm: 4 },
+              "&:hover .home-arrow": { transform: "translateX(6px)", opacity: 1 },
+              "&:hover .home-label": { color: "primary.main" },
+            }}
+          >
+            <Typography
+              sx={{
+                fontFamily: '"Fraunces", serif',
+                fontSize: { xs: 24, sm: 32 },
+                color: "text.secondary",
+                fontWeight: 500,
+                flexShrink: 0,
+                width: { xs: 36, sm: 56 },
+              }}
+            >
+              {item.n}
+            </Typography>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography
+                className="home-label"
+                sx={{
+                  fontFamily: '"Fraunces", serif',
+                  fontSize: { xs: 22, sm: 30 },
+                  fontWeight: 600,
+                  transition: "color 0.15s",
+                }}
+              >
+                {item.label}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {item.description}
+              </Typography>
+            </Box>
+            <ArrowForwardRoundedIcon
+              className="home-arrow"
+              sx={{
+                opacity: 0.3,
+                transition: "transform 0.15s, opacity 0.15s",
+                flexShrink: 0,
+              }}
+            />
+          </Box>
+          <Divider />
+        </Box>
+      ))}
     </Box>
   );
 };

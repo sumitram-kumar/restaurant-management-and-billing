@@ -10,7 +10,6 @@ import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Skeleton from "@mui/material/Skeleton";
@@ -66,18 +65,14 @@ const ShowMenu = () => {
           flexWrap: "wrap",
         }}
       >
-        <Box>
-          <Typography variant="h5" fontWeight={800}>
-            Menu
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {isLoading
-              ? "Loading..."
-              : `${menuItems.length} item${menuItems.length === 1 ? "" : "s"}`}
-          </Typography>
-        </Box>
+        <Typography variant="body1" color="text.secondary">
+          {isLoading
+            ? "Loading..."
+            : `${menuItems.length} item${menuItems.length === 1 ? "" : "s"} on the menu`}
+        </Typography>
         <Button
           variant="contained"
+          disabled={isLoading}
           startIcon={<AddRoundedIcon />}
           onClick={() => navigate("/addMenuItem")}
         >
@@ -123,8 +118,8 @@ const ShowMenu = () => {
                 menuItems.map((item) => (
                   <TableRow key={item.id} hover>
                     <TableCell sx={{ fontWeight: 600 }}>{item.name}</TableCell>
-                    <TableCell>
-                      <Chip label={item.category} size="small" variant="outlined" />
+                    <TableCell sx={{ color: "text.secondary" }}>
+                      {item.category}
                     </TableCell>
                     <TableCell align="right">{`₹${item.halfPrice}`}</TableCell>
                     <TableCell align="right">{`₹${item.fullPrice}`}</TableCell>

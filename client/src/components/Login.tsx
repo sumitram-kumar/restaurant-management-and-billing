@@ -2,13 +2,10 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import Avatar from "@mui/material/Avatar";
+import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
-import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -30,52 +27,61 @@ const Login = () => {
       sx={{
         minHeight: "100vh",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        flexDirection: "column",
         bgcolor: "background.default",
-        position: "relative",
-        px: 2,
       }}
     >
-      <IconButton
-        onClick={toggleMode}
-        sx={{ position: "absolute", top: 20, right: 20 }}
-        aria-label="Toggle color mode"
-      >
-        {mode === "light" ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
-      </IconButton>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2.5 }}>
+        <IconButton onClick={toggleMode} aria-label="Toggle color mode">
+          {mode === "light" ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
+        </IconButton>
+      </Box>
 
-      <Card sx={{ width: "100%", maxWidth: 400 }}>
-        <CardContent sx={{ p: { xs: 3, sm: 5 }, textAlign: "center" }}>
-          <Avatar
-            sx={{
-              bgcolor: "primary.main",
-              width: 56,
-              height: 56,
-              mx: "auto",
-              mb: 3,
-            }}
+      <Box
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          px: 3,
+        }}
+      >
+        <Box sx={{ maxWidth: 420, width: "100%" }}>
+          <Typography
+            variant="overline"
+            color="primary.main"
+            sx={{ display: "block", mb: 1.5 }}
           >
-            <StorefrontRoundedIcon />
-          </Avatar>
-          <Typography variant="h5" fontWeight={800} gutterBottom>
             Restaurant Billing
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+          <Typography
+            sx={{
+              fontFamily: '"Fraunces", serif',
+              fontWeight: 600,
+              fontSize: { xs: 40, sm: 52 },
+              lineHeight: 1.05,
+              mb: 2,
+            }}
+          >
+            Run the till,
+            <br />
+            without the chaos.
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
             Sign in to manage your menu, invoices and sales reports.
           </Typography>
+          <Divider sx={{ mb: 4 }} />
           <Button
-            fullWidth
             variant="contained"
             size="large"
             disabled={isLoading}
             onClick={() => loginWithRedirect()}
-            endIcon={<LoginRoundedIcon />}
+            endIcon={<ArrowForwardRoundedIcon />}
           >
             {isLoading ? "Loading..." : "Log In"}
           </Button>
-        </CardContent>
-      </Card>
+        </Box>
+      </Box>
     </Box>
   );
 };

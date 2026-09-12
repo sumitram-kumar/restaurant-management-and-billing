@@ -31,11 +31,8 @@ const PrintInvoice = () => {
 
   return (
     <Box>
-      <Typography variant="h5" fontWeight={800} gutterBottom className="hidden-print">
-        Invoice
-      </Typography>
       <Typography
-        variant="body2"
+        variant="body1"
         color="text.secondary"
         sx={{ mb: 3 }}
         className="hidden-print"
