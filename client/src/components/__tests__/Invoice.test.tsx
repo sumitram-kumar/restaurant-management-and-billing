@@ -54,7 +54,7 @@ describe("Invoice", () => {
   it("shows a validation error when adding with no fields filled", async () => {
     renderInvoice();
 
-    await userEvent.click(screen.getByRole("button", { name: /add \/ update/i }));
+    await userEvent.click(screen.getByRole("button", { name: /add to order/i }));
 
     expect(toast.error).toHaveBeenCalledWith("Enter All Fields!");
   });
@@ -75,11 +75,11 @@ describe("Invoice", () => {
     const quantityInput = screen.getByLabelText("Quantity");
     await userEvent.type(quantityInput, "2");
 
-    await userEvent.click(screen.getByRole("button", { name: /add \/ update/i }));
+    await userEvent.click(screen.getByRole("button", { name: /add to order/i }));
 
     // 2 x fullPrice(220) = 440
-    expect(await screen.findByText("Paneer Butter Masala(F)")).toBeInTheDocument();
-    expect(screen.getByText("440")).toBeInTheDocument();
+    expect(await screen.findByText("Paneer Butter Masala (F)")).toBeInTheDocument();
+    expect(screen.getByText("₹440")).toBeInTheDocument();
     expect(toast.success).toHaveBeenCalledWith("Paneer Butter Masala added!");
   });
 });

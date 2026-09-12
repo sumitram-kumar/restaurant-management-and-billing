@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -11,15 +11,11 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import "./styles/Stats.css";
-import Navbar from "./Navbar";
-import BottomNavigation from "@mui/material/BottomNavigation";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { getStats } from "../api/stats";
 import { getErrorMessage } from "../api/errorMessage";
 import { StatsResponse } from "../types";
@@ -28,8 +24,14 @@ import type { Dayjs } from "dayjs";
 const money = (value: string | number | null | undefined) =>
   Number(value ?? 0).toFixed(2);
 
+const SUMMARY_TILES: Array<{ key: keyof StatsResponse["totals"]; label: string }> = [
+  { key: "subtotal", label: "Subtotal" },
+  { key: "discountAmount", label: "Discounts" },
+  { key: "taxAmount", label: "Total Tax" },
+  { key: "finalAmount", label: "Total Sales" },
+];
+
 const Stats = () => {
-  const [open, setOpen] = useState(false);
   const [fromDate, setFromDate] = useState<Dayjs | null>(null);
   const [toDate, setToDate] = useState<Dayjs | null>(null);
   const [stats, setStats] = useState<StatsResponse | null>(null);
@@ -52,141 +54,109 @@ const Stats = () => {
   };
 
   return (
-    <div>
-      <div className="navbar">
-        <Navbar showText="STATS" />
-      </div>
-      <div className="outer">
-        <div className="inner">
-          <div className="child">
+    <Box>
+      <Typography variant="h5" fontWeight={800} gutterBottom>
+        Sales & Tax Stats
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        Pick a date range to see item-wise sales and totals.
+      </Typography>
+
+      <Card sx={{ mb: 3 }}>
+        <CardContent sx={{ p: 3 }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              flexWrap: "wrap",
+              alignItems: "center",
+            }}
+          >
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker
-                label="Begin"
+                label="From"
                 inputFormat="YYYY-MM-DD"
                 value={fromDate}
                 onChange={setFromDate}
                 renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
-          </div>
-          <div className="child">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker
-                label="End"
+                label="To"
                 inputFormat="YYYY-MM-DD"
                 value={toDate}
                 onChange={setToDate}
                 renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
-          </div>
-          <div className="child">
             <Button
-              className="stats-btn"
-              color="success"
               variant="contained"
-              size="large"
+              startIcon={<SearchRoundedIcon />}
               onClick={handleShow}
             >
-              SHOW
+              Show
             </Button>
-          </div>
-        </div>
-      </div>
+          </Box>
+        </CardContent>
+      </Card>
 
       {stats && (
-        <div className="statsTab">
-          <Paper
+        <>
+          <Box
             sx={{
-              width: "55%",
-              overflow: "hidden",
-              textAlign: "center",
-              margin: "auto",
+              display: "grid",
+              gap: 2,
+              gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(4, 1fr)" },
+              mb: 3,
             }}
           >
-            <TableContainer sx={{ maxHeight: "40rem" }}>
-              <Table stickyHeader aria-label="sticky table">
+            {SUMMARY_TILES.map((tile) => (
+              <Card key={tile.key}>
+                <CardContent sx={{ p: 2.5 }}>
+                  <Typography variant="overline" color="text.secondary">
+                    {tile.label}
+                  </Typography>
+                  <Typography variant="h6" fontWeight={800}>
+                    {`₹${money(stats.totals[tile.key])}`}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+
+          <Card>
+            <TableContainer sx={{ maxHeight: "50vh" }}>
+              <Table stickyHeader>
                 <TableHead>
                   <TableRow>
-                    <TableCell align="center">
-                      <strong>Sr. No.</strong>
-                    </TableCell>
-                    <TableCell align="center">
-                      <strong>Food Name</strong>
-                    </TableCell>
-                    <TableCell align="center">
-                      <strong>Total Sales</strong>
-                    </TableCell>
+                    <TableCell>Food Name</TableCell>
+                    <TableCell align="right">Total Sales</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {stats.salesByItem.map((row, i) => (
-                    <TableRow
-                      key={row.foodName}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row" align="center">
-                        {i + 1}
-                      </TableCell>
-                      <TableCell align="center">{row.foodName}</TableCell>
-                      <TableCell align="center">₹ {money(row.totalSales)}</TableCell>
+                  {stats.salesByItem.map((row) => (
+                    <TableRow key={row.foodName} hover>
+                      <TableCell sx={{ fontWeight: 600 }}>{row.foodName}</TableCell>
+                      <TableCell align="right">{`₹${money(row.totalSales)}`}</TableCell>
                     </TableRow>
                   ))}
+                  {stats.salesByItem.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={2} align="center" sx={{ py: 4 }}>
+                        <Typography color="text.secondary">
+                          No sales in this date range.
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
-          </Paper>
-          <br></br>
-          <Button
-            variant="contained"
-            color="error"
-            className="stats-btn"
-            onClick={() => setOpen(true)}
-          >
-            More Information
-          </Button>
-          <Dialog
-            open={open}
-            onClose={() => setOpen(false)}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              <u>
-                {"Data from " +
-                  fromDate?.format("YYYY-MM-DD") +
-                  " to " +
-                  toDate?.format("YYYY-MM-DD")}
-              </u>
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                <strong>Subtotal: ₹ {money(stats.totals.subtotal)}</strong>
-                <br></br>
-                <br></br>
-                <strong>Discounts: ₹ {money(stats.totals.discountAmount)}</strong>
-                <br></br>
-                <br></br>
-                <strong>Total Taxes: ₹ {money(stats.totals.taxAmount)}</strong>
-                <br></br>
-                <br></br>
-                <strong>Total Sales: ₹ {money(stats.totals.finalAmount)}</strong>
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setOpen(false)} autoFocus>
-                Looks Good?
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </div>
+          </Card>
+        </>
       )}
-      <div>
-        <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3}>
-          <BottomNavigation sx={{ backgroundColor: "primary.main" }} />
-        </Paper>
-      </div>
-    </div>
+    </Box>
   );
 };
 

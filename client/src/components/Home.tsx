@@ -1,69 +1,107 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import "./styles/Home.css";
-import Navbar from "./Navbar";
-import Paper from "@mui/material/Paper";
-import BottomNavigation from "@mui/material/BottomNavigation";
+import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
+import CardActionArea from "@mui/material/CardActionArea";
+import CardContent from "@mui/material/CardContent";
+import Avatar from "@mui/material/Avatar";
+import ReceiptLongRoundedIcon from "@mui/icons-material/ReceiptLongRounded";
+import RestaurantMenuRoundedIcon from "@mui/icons-material/RestaurantMenuRounded";
+import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
+import PercentRoundedIcon from "@mui/icons-material/PercentRounded";
+import { ComponentType } from "react";
+import { SvgIconProps } from "@mui/material/SvgIcon";
+
+interface Tile {
+  label: string;
+  description: string;
+  path: string;
+  icon: ComponentType<SvgIconProps>;
+  color: "primary" | "success" | "warning" | "info";
+}
+
+const TILES: Tile[] = [
+  {
+    label: "New Invoice",
+    description: "Ring up an order and print a receipt",
+    path: "/invoice",
+    icon: ReceiptLongRoundedIcon,
+    color: "primary",
+  },
+  {
+    label: "Menu",
+    description: "Manage items, categories and prices",
+    path: "/menu",
+    icon: RestaurantMenuRoundedIcon,
+    color: "success",
+  },
+  {
+    label: "Stats",
+    description: "Sales and tax reports over a date range",
+    path: "/showStats",
+    icon: InsightsRoundedIcon,
+    color: "info",
+  },
+  {
+    label: "Tax",
+    description: "Update the current CGST / SGST rate",
+    path: "/tax",
+    icon: PercentRoundedIcon,
+    color: "warning",
+  },
+];
 
 const Home = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <div className="navbar">
-        <Navbar showText="DASHBOARD" />
-      </div>
+    <Box>
+      <Typography variant="h5" fontWeight={800} gutterBottom>
+        Welcome back
+      </Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+        Pick up where you left off, or start a new invoice.
+      </Typography>
 
-      <div className="box-home">
-        <Box sx={{ "& button": { m: 1 } }}>
-          <div>
-            <Button
-              className="home"
-              color="success"
-              variant="contained"
-              size="large"
-              onClick={() => navigate("/invoice")}
-            >
-              Invoice
-            </Button>
-            <Button
-              className="home"
-              color="success"
-              variant="contained"
-              size="large"
-              onClick={() => navigate("/menu")}
-            >
-              Menu
-            </Button>
-            <Button
-              className="home"
-              color="success"
-              variant="contained"
-              size="large"
-              onClick={() => navigate("/showStats")}
-            >
-              Stats
-            </Button>
-            <Button
-              className="home"
-              color="success"
-              variant="contained"
-              size="large"
-              onClick={() => navigate("/tax")}
-            >
-              Tax
-            </Button>
-          </div>
-        </Box>
-      </div>
-      <div>
-        <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3}>
-          <BottomNavigation sx={{ backgroundColor: "primary.main" }} />
-        </Paper>
-      </div>
-    </div>
+      <Box
+        sx={{
+          display: "grid",
+          gap: 2.5,
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+            lg: "repeat(4, 1fr)",
+          },
+        }}
+      >
+        {TILES.map((tile) => (
+          <Card key={tile.path}>
+            <CardActionArea onClick={() => navigate(tile.path)} sx={{ height: "100%" }}>
+              <CardContent sx={{ p: 3 }}>
+                <Avatar
+                  variant="rounded"
+                  sx={{
+                    bgcolor: `${tile.color}.main`,
+                    color: `${tile.color}.contrastText`,
+                    width: 44,
+                    height: 44,
+                    mb: 2,
+                  }}
+                >
+                  <tile.icon />
+                </Avatar>
+                <Typography variant="subtitle1" fontWeight={700} gutterBottom>
+                  {tile.label}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {tile.description}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        ))}
+      </Box>
+    </Box>
   );
 };
 

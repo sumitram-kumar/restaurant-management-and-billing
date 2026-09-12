@@ -1,55 +1,82 @@
-import React from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import Avatar from "@mui/material/Avatar";
+import IconButton from "@mui/material/IconButton";
+import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
+import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
+import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
+import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { useAuth0 } from "@auth0/auth0-react";
-import "./styles/Login.css";
-import Navbar from "./Navbar";
-import Paper from "@mui/material/Paper";
-import BottomNavigation from "@mui/material/BottomNavigation";
+import { useColorMode } from "../context/ColorModeContext";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { loginWithRedirect, logout, isAuthenticated } = useAuth0();
+  const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+  const { mode, toggleMode } = useColorMode();
 
-  if (isAuthenticated) {
-    navigate("/home");
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
-    <div>
-      <div className="navbar">
-        <Navbar showText="ADMIN" />
-      </div>
-      <div>
-        <h1 className="loginHead">RESTAURANT BILLING</h1>
-        <h2 className="loginSub">WELCOME AGAIN!</h2>
-      </div>
-      <div>
-        <Button
-          className="login-btn"
-          variant="contained"
-          onClick={() => loginWithRedirect()}
-          color="primary"
-          size="large"
-        >
-          Click Here To Login
-        </Button>
-        <Button
-          className="login-btn"
-          variant="contained"
-          onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-          color="primary"
-          size="large"
-        >
-          Logout
-        </Button>
-      </div>
-      <div>
-        <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3}>
-          <BottomNavigation sx={{ backgroundColor: "primary.main" }} />
-        </Paper>
-      </div>
-    </div>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: "background.default",
+        position: "relative",
+        px: 2,
+      }}
+    >
+      <IconButton
+        onClick={toggleMode}
+        sx={{ position: "absolute", top: 20, right: 20 }}
+        aria-label="Toggle color mode"
+      >
+        {mode === "light" ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
+      </IconButton>
+
+      <Card sx={{ width: "100%", maxWidth: 400 }}>
+        <CardContent sx={{ p: { xs: 3, sm: 5 }, textAlign: "center" }}>
+          <Avatar
+            sx={{
+              bgcolor: "primary.main",
+              width: 56,
+              height: 56,
+              mx: "auto",
+              mb: 3,
+            }}
+          >
+            <StorefrontRoundedIcon />
+          </Avatar>
+          <Typography variant="h5" fontWeight={800} gutterBottom>
+            Restaurant Billing
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+            Sign in to manage your menu, invoices and sales reports.
+          </Typography>
+          <Button
+            fullWidth
+            variant="contained"
+            size="large"
+            disabled={isLoading}
+            onClick={() => loginWithRedirect()}
+            endIcon={<LoginRoundedIcon />}
+          >
+            {isLoading ? "Loading..." : "Log In"}
+          </Button>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 

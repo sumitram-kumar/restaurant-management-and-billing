@@ -6,6 +6,7 @@ import { Auth0Provider } from "@auth0/auth0-react";
 import { AuthTokenBridge } from "./auth/AuthTokenBridge";
 import { CatalogProvider } from "./context/CatalogContext";
 import { BillProvider } from "./context/BillContext";
+import { ColorModeProvider } from "./context/ColorModeContext";
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN;
 const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
@@ -37,12 +38,14 @@ root.render(
         redirect_uri: window.location.origin + process.env.PUBLIC_URL,
       }}
     >
-      <AuthTokenBridge />
-      <CatalogProvider>
-        <BillProvider>
-          <App />
-        </BillProvider>
-      </CatalogProvider>
+      <ColorModeProvider>
+        <AuthTokenBridge />
+        <CatalogProvider>
+          <BillProvider>
+            <App />
+          </BillProvider>
+        </CatalogProvider>
+      </ColorModeProvider>
     </Auth0Provider>
   </React.StrictMode>
 );

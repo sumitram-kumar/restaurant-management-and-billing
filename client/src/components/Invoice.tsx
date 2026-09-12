@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
@@ -7,6 +7,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 import PostAddTwoToneIcon from "@mui/icons-material/PostAddTwoTone";
 import CheckCircleOutlineTwoToneIcon from "@mui/icons-material/CheckCircleOutlineTwoTone";
 import Button from "@mui/material/Button";
@@ -17,11 +18,12 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import DeleteIcon from "@mui/icons-material/Delete";
-import "./styles/Invoice.css";
-import Navbar from "./Navbar";
-import BottomNavigation from "@mui/material/BottomNavigation";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import { useCatalog } from "../context/CatalogContext";
 import { useBillDraft } from "../context/BillContext";
 import { createBill } from "../api/bills";
@@ -110,195 +112,189 @@ const Invoice = () => {
     }
   };
 
-  return (
-    <div>
-      <div className="navbar">
-        <Navbar showText="INVOICE & PREVIEW" />
-      </div>
-      <div className="flex-container">
-        <div className="flex-child">
-          <div>
-            <Box
-              component="form"
-              sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
-              noValidate
-              autoComplete="off"
-            >
-              <div className="invoice-r2">
-                <TextField
-                  error={Number(discount) < 0}
-                  helperText={Number(discount) < 0 && "(-) Negative Input"}
-                  id="outlined-discount"
-                  name="discount"
-                  label="Discount"
-                  value={discount}
-                  type="number"
-                  onChange={(e) => setDiscount(e.target.value)}
-                />
-                <TextField
-                  id="outlined-select-payment-mode"
-                  select
-                  name="payment_mode"
-                  label="Payment Mode"
-                  value={paymentMode}
-                  onChange={(e) => setPaymentMode(e.target.value as PaymentMode)}
-                >
-                  {PAYMENT_MODES.map((mode) => (
-                    <MenuItem key={mode} value={mode}>
-                      {mode.replace("_", " ")}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </div>
-              <br></br>
-              <div className="invoice-r3">
-                <TextField
-                  id="outlined-select-food"
-                  select
-                  name="food_name"
-                  label="Item"
-                  value={foodName}
-                  onChange={(e) => setFoodName(e.target.value)}
-                >
-                  {menuItems.map((item) => (
-                    <MenuItem key={item.name} value={item.name}>
-                      {item.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </div>
-              <br></br>
-              <div className="invoice-r4">
-                <FormControl>
-                  <RadioGroup
-                    row
-                    aria-labelledby="demo-row-radio-buttons-group-label"
-                    name="row-radio-buttons-group"
-                    sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
-                    value={quantityType}
-                    onChange={(e) => setQuantityType(e.target.value as QuantityType)}
-                  >
-                    <FormControlLabel value="FULL" control={<Radio />} label="Full" />
-                    <FormControlLabel value="HALF" control={<Radio />} label="Half" />
-                    <FormControlLabel
-                      value="NA"
-                      control={<Radio />}
-                      label="Not Applicable"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </div>
-              <br></br>
-              <div className="invoice-r5">
-                <TextField
-                  error={Number(quantity) < 0}
-                  helperText={Number(quantity) < 0 && "(-) Negative Input"}
-                  id="outlined-select-quantity"
-                  name="quantity"
-                  label="Quantity"
-                  value={quantity}
-                  type="number"
-                  onChange={(e) => setQuantity(e.target.value)}
-                />
-              </div>
-              <br></br>
-              <div className="invoice-r6">
-                <Button
-                  className="add"
-                  variant="contained"
-                  color="success"
-                  onClick={handleAdd}
-                  endIcon={<PostAddTwoToneIcon />}
-                >
-                  ADD / UPDATE
-                </Button>
-              </div>
-              <br></br>
-              <div className="invoice-r7">
-                <Button
-                  className="fin"
-                  variant="outlined"
-                  color="primary"
-                  onClick={handleFinish}
-                  endIcon={<CheckCircleOutlineTwoToneIcon />}
-                >
-                  FINISH
-                </Button>
-              </div>
-            </Box>
-          </div>
-        </div>
+  const subtotal = draftLines.reduce((sum, line) => sum + line.amount, 0);
 
-        <div className="flex-child">
-          <div></div>
-          <div>
-            <Paper sx={{ width: "100%", overflow: "hidden" }}>
-              <TableContainer sx={{ maxHeight: 440 }} className="invoice-ppr">
-                <Table stickyHeader aria-label="sticky table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="center" className="invoiceTb">
-                        No.
+  return (
+    <Box>
+      <Typography variant="h5" fontWeight={800} gutterBottom>
+        New Invoice
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        Add items to the order, then finish to save and print.
+      </Typography>
+
+      <Box
+        sx={{
+          display: "grid",
+          gap: 3,
+          gridTemplateColumns: { xs: "1fr", md: "380px 1fr" },
+          alignItems: "start",
+        }}
+      >
+        <Card>
+          <CardContent sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2.5 }}>
+            <Typography variant="subtitle1" fontWeight={700}>
+              Add Item
+            </Typography>
+            <TextField
+              select
+              label="Item"
+              value={foodName}
+              onChange={(e) => setFoodName(e.target.value)}
+              fullWidth
+            >
+              {menuItems.map((item) => (
+                <MenuItem key={item.name} value={item.name}>
+                  {item.name}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <FormControl>
+              <FormLabel sx={{ fontSize: 13, mb: 0.5 }}>Portion</FormLabel>
+              <RadioGroup
+                row
+                value={quantityType}
+                onChange={(e) => setQuantityType(e.target.value as QuantityType)}
+              >
+                <FormControlLabel
+                  value="FULL"
+                  control={<Radio size="small" />}
+                  label="Full"
+                />
+                <FormControlLabel
+                  value="HALF"
+                  control={<Radio size="small" />}
+                  label="Half"
+                />
+                <FormControlLabel
+                  value="NA"
+                  control={<Radio size="small" />}
+                  label="N/A"
+                />
+              </RadioGroup>
+            </FormControl>
+
+            <TextField
+              error={Number(quantity) < 0}
+              helperText={Number(quantity) < 0 ? "(-) Negative Input" : " "}
+              label="Quantity"
+              value={quantity}
+              type="number"
+              fullWidth
+              onChange={(e) => setQuantity(e.target.value)}
+            />
+
+            <Button
+              variant="contained"
+              onClick={handleAdd}
+              startIcon={<PostAddTwoToneIcon />}
+            >
+              Add to Order
+            </Button>
+
+            <Divider sx={{ my: 0.5 }} />
+
+            <Typography variant="subtitle1" fontWeight={700}>
+              Finish Invoice
+            </Typography>
+            <TextField
+              error={Number(discount) < 0}
+              helperText={Number(discount) < 0 ? "(-) Negative Input" : " "}
+              label="Discount %"
+              value={discount}
+              type="number"
+              fullWidth
+              onChange={(e) => setDiscount(e.target.value)}
+            />
+            <TextField
+              select
+              label="Payment Mode"
+              value={paymentMode}
+              fullWidth
+              onChange={(e) => setPaymentMode(e.target.value as PaymentMode)}
+            >
+              {PAYMENT_MODES.map((mode) => (
+                <MenuItem key={mode} value={mode}>
+                  {mode.replace("_", " ")}
+                </MenuItem>
+              ))}
+            </TextField>
+            <Button
+              variant="outlined"
+              color="success"
+              onClick={handleFinish}
+              endIcon={<CheckCircleOutlineTwoToneIcon />}
+            >
+              Finish & Print
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent sx={{ p: 0 }}>
+            <TableContainer sx={{ maxHeight: "55vh" }}>
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Item</TableCell>
+                    <TableCell align="right">Qty</TableCell>
+                    <TableCell align="right">Rate</TableCell>
+                    <TableCell align="right">Amount</TableCell>
+                    <TableCell align="right" />
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {draftLines.map((line, i) => (
+                    <TableRow key={i} hover>
+                      <TableCell sx={{ fontWeight: 600 }}>
+                        {`${line.foodName} (${line.quantityType === "HALF" ? "H" : "F"})`}
                       </TableCell>
-                      <TableCell align="center" className="invoiceTb">
-                        Item
-                      </TableCell>
-                      <TableCell align="center" className="invoiceTb">
-                        Qty
-                      </TableCell>
-                      <TableCell align="center" className="invoiceTb">
-                        Rate
-                      </TableCell>
-                      <TableCell align="center" className="invoiceTb">
-                        Price
-                      </TableCell>
-                      <TableCell align="center" className="deleteCell"></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {draftLines.map((line, i) => (
-                      <TableRow
-                        key={i}
-                        sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                      >
-                        <TableCell
-                          component="th"
-                          scope="row"
-                          className="first-col-invoice"
+                      <TableCell align="right">{line.quantity}</TableCell>
+                      <TableCell align="right">{`₹${line.unitPrice}`}</TableCell>
+                      <TableCell align="right">{`₹${line.amount}`}</TableCell>
+                      <TableCell align="right">
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={() => removeLine(i)}
                         >
-                          {i + 1}
-                        </TableCell>
-                        <TableCell align="center">
-                          {line.quantityType === "HALF"
-                            ? `${line.foodName}(H)`
-                            : `${line.foodName}(F)`}
-                        </TableCell>
-                        <TableCell align="center">{line.quantity}</TableCell>
-                        <TableCell align="center">{line.unitPrice}</TableCell>
-                        <TableCell align="center">{line.amount}</TableCell>
-                        <TableCell align="center" className="deleteColumn">
-                          <Button
-                            color="inherit"
-                            size="small"
-                            onClick={() => removeLine(i)}
-                            endIcon={<DeleteIcon />}
-                          ></Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
-          </div>
-        </div>
-      </div>
-      <div>
-        <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3}>
-          <BottomNavigation sx={{ backgroundColor: "primary.main" }} />
-        </Paper>
-      </div>
-    </div>
+                          <DeleteOutlineRoundedIcon fontSize="small" />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {draftLines.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
+                        <Typography color="text.secondary">
+                          No items added yet.
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {draftLines.length > 0 && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 1,
+                  p: 2,
+                  borderTop: "1px solid",
+                  borderColor: "divider",
+                }}
+              >
+                <Typography color="text.secondary">Subtotal:</Typography>
+                <Typography fontWeight={700}>{`₹${subtotal.toFixed(2)}`}</Typography>
+              </Box>
+            )}
+          </CardContent>
+        </Card>
+      </Box>
+    </Box>
   );
 };
 

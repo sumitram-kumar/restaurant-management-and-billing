@@ -3,11 +3,11 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import { toast } from "react-toastify";
-import "./styles/AddEditMenuItem.css";
-import Navbar from "./Navbar";
-import Paper from "@mui/material/Paper";
-import BottomNavigation from "@mui/material/BottomNavigation";
 import { getMenuItem, updateMenuItem } from "../api/menu";
 import { useCatalog } from "../context/CatalogContext";
 import { getErrorMessage } from "../api/errorMessage";
@@ -40,7 +40,7 @@ const EditMenuItem = () => {
     setFood((current) => ({ ...current, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.MouseEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!food.name || !food.category || !food.halfPrice || !food.fullPrice) {
       toast.error("Enter All Fields!");
@@ -63,76 +63,69 @@ const EditMenuItem = () => {
   };
 
   return (
-    <div>
-      <div className="navbar">
-        <Navbar showText="EDIT ITEM" />
-      </div>
-      <div className="below-navbar">
-        <Box
-          component="form"
-          sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
-          noValidate
-          autoComplete="off"
-        >
-          <div>
+    <Box sx={{ maxWidth: 520 }}>
+      <Typography variant="h5" fontWeight={800} gutterBottom>
+        Edit Menu Item
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        Update this dish's details.
+      </Typography>
+
+      <Card>
+        <CardContent sx={{ p: 3 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
+          >
             <TextField
               required
-              id="outlined-required"
+              fullWidth
               label="Food Name"
               name="name"
               value={food.name || ""}
               onChange={handleChange}
             />
-          </div>
-          <div>
             <TextField
               required
-              id="outlined-required"
+              fullWidth
               label="Category"
               name="category"
               value={food.category || ""}
               onChange={handleChange}
             />
-          </div>
-          <div>
-            <TextField
-              type="number"
-              required
-              id="outlined-required"
-              label="Half Price"
-              name="halfPrice"
-              value={food.halfPrice || ""}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <TextField
-              type="number"
-              required
-              id="outlined-required"
-              label="Full Price"
-              name="fullPrice"
-              value={food.fullPrice || ""}
-              onChange={handleChange}
-            />
-          </div>
-          <Button
-            className="addEditItem-btm"
-            color="success"
-            variant="contained"
-            size="large"
-            onClick={handleSubmit}
-          >
-            UPDATE ITEM
-          </Button>
-        </Box>
-      </div>
-      <div>
-        <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3}>
-          <BottomNavigation sx={{ backgroundColor: "primary.main" }} />
-        </Paper>
-      </div>
-    </div>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <TextField
+                type="number"
+                required
+                fullWidth
+                label="Half Price"
+                name="halfPrice"
+                value={food.halfPrice || ""}
+                onChange={handleChange}
+              />
+              <TextField
+                type="number"
+                required
+                fullWidth
+                label="Full Price"
+                name="fullPrice"
+                value={food.fullPrice || ""}
+                onChange={handleChange}
+              />
+            </Box>
+            <Box sx={{ display: "flex", gap: 1.5, justifyContent: "flex-end", mt: 1 }}>
+              <Button variant="text" onClick={() => navigate("/menu")}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="contained" endIcon={<SaveRoundedIcon />}>
+                Save Changes
+              </Button>
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 

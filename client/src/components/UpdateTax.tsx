@@ -3,10 +3,11 @@ import { toast } from "react-toastify";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import "./styles/UpdateTax.css";
-import Navbar from "./Navbar";
-import BottomNavigation from "@mui/material/BottomNavigation";
-import Paper from "@mui/material/Paper";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import { useCatalog } from "../context/CatalogContext";
 import { createTaxRate } from "../api/tax";
 import { getErrorMessage } from "../api/errorMessage";
@@ -20,7 +21,7 @@ const UpdateTax = () => {
     setDraft((current) => ({ ...current, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.MouseEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!draft.cgst || !draft.sgst) {
       toast.error("Enter All Fields!");
@@ -30,72 +31,92 @@ const UpdateTax = () => {
     try {
       await createTaxRate({ cgst: Number(draft.cgst), sgst: Number(draft.sgst) });
       toast.success("Taxes Updated!");
+      setDraft({ cgst: "", sgst: "" });
       await refreshTaxRate();
     } catch (error) {
       toast.error(getErrorMessage(error, "Failed to update tax rate"));
     }
   };
 
-  const cgst = draft.cgst !== "" ? draft.cgst : taxRate.cgst;
-  const sgst = draft.sgst !== "" ? draft.sgst : taxRate.sgst;
+  const cgst = draft.cgst !== "" ? draft.cgst : "";
+  const sgst = draft.sgst !== "" ? draft.sgst : "";
 
   return (
-    <div>
-      <div className="navbar">
-        <Navbar showText="UPDATE TAX" />
-      </div>
-      <div className="below-navbar">
-        <Box
-          component="form"
-          sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
-          noValidate
-          autoComplete="off"
+    <Box sx={{ maxWidth: 520 }}>
+      <Typography variant="h5" fontWeight={800} gutterBottom>
+        Tax Settings
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        Set the CGST / SGST rate applied to new invoices.
+      </Typography>
+
+      <Card sx={{ mb: 3 }}>
+        <CardContent
+          sx={{
+            p: 3,
+            display: "flex",
+            justifyContent: "space-around",
+            textAlign: "center",
+          }}
         >
-          <div className="tax-text">
-            <TextField
-              className="tax"
-              error={Number(cgst) < 0}
-              helperText={Number(cgst) < 0 && "(-) Negative Input"}
-              id="outlined-required"
-              label="CGST"
-              type="number"
-              name="cgst"
-              onChange={handleChange}
-              value={cgst}
-            />
-          </div>
-          <div className="tax-text">
-            <TextField
-              className="tax"
-              error={Number(sgst) < 0}
-              helperText={Number(sgst) < 0 && "(-) Negative Input"}
-              id="outlined-required"
-              label="SGST"
-              type="number"
-              name="sgst"
-              onChange={handleChange}
-              value={sgst}
-              InputLabelProps={{ shrink: true }}
-            />
-          </div>
-          <br></br>
-          <Button
-            className="tax-btn"
-            variant="contained"
-            onClick={handleSubmit}
-            color="success"
-            size="large"
+          <Box>
+            <Typography variant="overline" color="text.secondary">
+              Current CGST
+            </Typography>
+            <Typography variant="h4" fontWeight={800}>
+              {taxRate.cgst}%
+            </Typography>
+          </Box>
+          <Divider orientation="vertical" flexItem />
+          <Box>
+            <Typography variant="overline" color="text.secondary">
+              Current SGST
+            </Typography>
+            <Typography variant="h4" fontWeight={800}>
+              {taxRate.sgst}%
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent sx={{ p: 3 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
           >
-            UPDATE TAXES
-          </Button>
-        </Box>
-      </div>
-      <div>
-        <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3}>
-          <BottomNavigation sx={{ backgroundColor: "primary.main" }} />
-        </Paper>
-      </div>
-    </div>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <TextField
+                error={Number(cgst) < 0}
+                helperText={Number(cgst) < 0 ? "(-) Negative Input" : " "}
+                label="New CGST %"
+                type="number"
+                name="cgst"
+                fullWidth
+                onChange={handleChange}
+                value={cgst}
+              />
+              <TextField
+                error={Number(sgst) < 0}
+                helperText={Number(sgst) < 0 ? "(-) Negative Input" : " "}
+                label="New SGST %"
+                type="number"
+                name="sgst"
+                fullWidth
+                onChange={handleChange}
+                value={sgst}
+              />
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button type="submit" variant="contained" endIcon={<SaveRoundedIcon />}>
+                Update Taxes
+              </Button>
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 
