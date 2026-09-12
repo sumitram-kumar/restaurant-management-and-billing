@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import { toast } from "react-toastify";
@@ -22,6 +23,7 @@ const AddMenuItem = () => {
     halfPrice: "",
     fullPrice: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -43,6 +45,7 @@ const AddMenuItem = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       await createMenuItem({
         name: food.name,
@@ -55,6 +58,7 @@ const AddMenuItem = () => {
       navigate("/menu");
     } catch (error) {
       toast.error(getErrorMessage(error, "Failed to add item"));
+      setIsSubmitting(false);
     }
   };
 
@@ -111,11 +115,26 @@ const AddMenuItem = () => {
               />
             </Box>
             <Box sx={{ display: "flex", gap: 1.5, justifyContent: "flex-end", mt: 1 }}>
-              <Button variant="text" onClick={() => navigate("/menu")}>
+              <Button
+                variant="text"
+                onClick={() => navigate("/menu")}
+                disabled={isSubmitting}
+              >
                 Cancel
               </Button>
-              <Button type="submit" variant="contained" endIcon={<SaveRoundedIcon />}>
-                Add Item
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={isSubmitting}
+                endIcon={
+                  isSubmitting ? (
+                    <CircularProgress size={16} color="inherit" />
+                  ) : (
+                    <SaveRoundedIcon />
+                  )
+                }
+              >
+                {isSubmitting ? "Adding..." : "Add Item"}
               </Button>
             </Box>
           </Box>

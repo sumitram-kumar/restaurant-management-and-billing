@@ -12,6 +12,7 @@ import Stats from "./components/Stats";
 import AddMenuItem from "./components/AddMenuItem";
 import EditMenuItem from "./components/EditMenuItem";
 import PrintInvoice from "./components/PrintInvoice";
+import NotFound from "./components/NotFound";
 
 const App = () => {
   const { mode } = useColorMode();
@@ -68,6 +69,7 @@ const App = () => {
           path="/showStats"
           element={<ProtectedRoute component={Stats} title="Sales & Tax Stats" />}
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </HashRouter>
   );

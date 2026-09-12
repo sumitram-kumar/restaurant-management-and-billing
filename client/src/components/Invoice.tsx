@@ -11,6 +11,7 @@ import FormLabel from "@mui/material/FormLabel";
 import PostAddTwoToneIcon from "@mui/icons-material/PostAddTwoTone";
 import CheckCircleOutlineTwoToneIcon from "@mui/icons-material/CheckCircleOutlineTwoTone";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -23,11 +24,13 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
+import ReceiptLongRoundedIcon from "@mui/icons-material/ReceiptLongRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import { useCatalog } from "../context/CatalogContext";
 import { useBillDraft } from "../context/BillContext";
 import { createBill } from "../api/bills";
 import { getErrorMessage } from "../api/errorMessage";
+import { useConfirm } from "../context/ConfirmDialogContext";
 import { PaymentMode, QuantityType } from "../types";
 
 const PAYMENT_MODES: PaymentMode[] = [
@@ -40,15 +43,17 @@ const PAYMENT_MODES: PaymentMode[] = [
 
 const Invoice = () => {
   const navigate = useNavigate();
-  const { menuItems } = useCatalog();
+  const { menuItems, isLoading: isCatalogLoading } = useCatalog();
   const { draftLines, addOrUpdateLine, removeLine, clearDraft, setLastBill } =
     useBillDraft();
+  const confirm = useConfirm();
 
   const [foodName, setFoodName] = useState("");
   const [quantityType, setQuantityType] = useState<QuantityType | "">("");
   const [quantity, setQuantity] = useState("");
   const [discount, setDiscount] = useState("");
   const [paymentMode, setPaymentMode] = useState<PaymentMode | "">("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAdd = () => {
     if (!foodName || !quantityType || !quantity) {
@@ -88,10 +93,16 @@ const Invoice = () => {
       toast.error("Add at least one item!");
       return;
     }
-    if (!window.confirm("Create Invoice? Check DISCOUNT again!!!")) {
-      return;
-    }
 
+    const confirmed = await confirm({
+      title: "Create this invoice?",
+      message:
+        "Double check the discount before confirming. This will save and print the bill.",
+      confirmText: "Create Invoice",
+    });
+    if (!confirmed) return;
+
+    setIsSubmitting(true);
     try {
       const bill = await createBill({
         paymentMode,
@@ -104,11 +115,13 @@ const Invoice = () => {
       });
 
       setLastBill(bill);
-      toast.success("Generating Bill...");
+      toast.success("Invoice created!");
       clearDraft();
       navigate("/printInvoice");
     } catch (error) {
       toast.error(getErrorMessage(error, "Failed to create invoice"));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -138,8 +151,9 @@ const Invoice = () => {
             </Typography>
             <TextField
               select
-              label="Item"
+              label={isCatalogLoading ? "Loading menu..." : "Item"}
               value={foodName}
+              disabled={isCatalogLoading}
               onChange={(e) => setFoodName(e.target.value)}
               fullWidth
             >
@@ -224,9 +238,16 @@ const Invoice = () => {
               variant="outlined"
               color="success"
               onClick={handleFinish}
-              endIcon={<CheckCircleOutlineTwoToneIcon />}
+              disabled={isSubmitting}
+              startIcon={
+                isSubmitting ? (
+                  <CircularProgress size={16} color="inherit" />
+                ) : (
+                  <CheckCircleOutlineTwoToneIcon />
+                )
+              }
             >
-              Finish & Print
+              {isSubmitting ? "Saving..." : "Finish & Print"}
             </Button>
           </CardContent>
         </Card>
@@ -267,6 +288,9 @@ const Invoice = () => {
                   {draftLines.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
+                        <ReceiptLongRoundedIcon
+                          sx={{ fontSize: 40, color: "text.disabled", mb: 1 }}
+                        />
                         <Typography color="text.secondary">
                           No items added yet.
                         </Typography>

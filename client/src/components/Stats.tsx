@@ -13,8 +13,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { getStats } from "../api/stats";
 import { getErrorMessage } from "../api/errorMessage";
@@ -35,6 +37,7 @@ const Stats = () => {
   const [fromDate, setFromDate] = useState<Dayjs | null>(null);
   const [toDate, setToDate] = useState<Dayjs | null>(null);
   const [stats, setStats] = useState<StatsResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleShow = async () => {
     if (!fromDate || !toDate) {
@@ -42,6 +45,7 @@ const Stats = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
       const data = await getStats(
         fromDate.format("YYYY-MM-DD"),
@@ -50,6 +54,8 @@ const Stats = () => {
       setStats(data);
     } catch (error) {
       toast.error(getErrorMessage(error, "Failed to load stats"));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -92,14 +98,30 @@ const Stats = () => {
             </LocalizationProvider>
             <Button
               variant="contained"
-              startIcon={<SearchRoundedIcon />}
+              disabled={isLoading}
+              startIcon={
+                isLoading ? (
+                  <CircularProgress size={16} color="inherit" />
+                ) : (
+                  <SearchRoundedIcon />
+                )
+              }
               onClick={handleShow}
             >
-              Show
+              {isLoading ? "Loading..." : "Show"}
             </Button>
           </Box>
         </CardContent>
       </Card>
+
+      {!stats && !isLoading && (
+        <Box sx={{ textAlign: "center", py: 8 }}>
+          <InsightsRoundedIcon sx={{ fontSize: 48, color: "text.disabled", mb: 1 }} />
+          <Typography color="text.secondary">
+            Pick a date range and click Show to see results.
+          </Typography>
+        </Box>
+      )}
 
       {stats && (
         <>

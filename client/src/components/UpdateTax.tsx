@@ -5,6 +5,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
@@ -15,6 +16,7 @@ import { getErrorMessage } from "../api/errorMessage";
 const UpdateTax = () => {
   const { taxRate, refreshTaxRate } = useCatalog();
   const [draft, setDraft] = useState({ cgst: "", sgst: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -28,6 +30,7 @@ const UpdateTax = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       await createTaxRate({ cgst: Number(draft.cgst), sgst: Number(draft.sgst) });
       toast.success("Taxes Updated!");
@@ -35,6 +38,8 @@ const UpdateTax = () => {
       await refreshTaxRate();
     } catch (error) {
       toast.error(getErrorMessage(error, "Failed to update tax rate"));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -109,8 +114,19 @@ const UpdateTax = () => {
               />
             </Box>
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button type="submit" variant="contained" endIcon={<SaveRoundedIcon />}>
-                Update Taxes
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={isSubmitting}
+                endIcon={
+                  isSubmitting ? (
+                    <CircularProgress size={16} color="inherit" />
+                  ) : (
+                    <SaveRoundedIcon />
+                  )
+                }
+              >
+                {isSubmitting ? "Updating..." : "Update Taxes"}
               </Button>
             </Box>
           </Box>
