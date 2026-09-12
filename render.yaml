@@ -9,6 +9,8 @@ services:
     envVars:
       - key: DATABASE_URL
         sync: false
+      - key: DIRECT_URL
+        sync: false
       - key: CORS_ORIGIN
         value: https://sumitram-kumar.github.io
       - key: AUTH0_AUDIENCE

@@ -26,6 +26,7 @@ jobs:
           --health-retries=10
     env:
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/billing_test
+      DIRECT_URL: postgresql://postgres:postgres@127.0.0.1:5432/billing_test
       PORT: 5000
       CORS_ORIGIN: http://localhost:3000
       AUTH0_AUDIENCE: https://kalika-billing-api
