@@ -21,7 +21,7 @@ const Login = () => {
         <Navbar showText="ADMIN" />
       </div>
       <div>
-        <h1 className="loginHead">KALIKA DHABA</h1>
+        <h1 className="loginHead">RESTAURANT BILLING</h1>
         <h2 className="loginSub">WELCOME AGAIN!</h2>
       </div>
       <div>

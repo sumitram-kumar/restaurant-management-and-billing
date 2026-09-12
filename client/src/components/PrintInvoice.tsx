@@ -35,8 +35,8 @@ const PrintInvoice = () => {
       <div style={style}>
         <div className="ticket">
           <p className="centered">
-            <strong>KALIKA DHABA</strong>
-            <br></br>IGNOU Road,<br></br>Neb Sarai, New Delhi, 110068
+            <strong>RESTAURANT BILLING</strong>
+            <br></br>123 Main Street,<br></br>Your City, 000000
           </p>
           <div className="row-print">
             <div className="column-print">
