@@ -107,7 +107,16 @@ export function AppShell({ title, children }: AppShellProps) {
       <Divider />
       <Box sx={{ p: 1.5 }}>
         <ListItemButton
-          onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+          onClick={() =>
+            logout({
+              // Same reasoning as the login redirect_uri: on a GitHub Pages
+              // project site the app lives under a subpath, which
+              // window.location.origin alone doesn't include.
+              logoutParams: {
+                returnTo: window.location.origin + process.env.PUBLIC_URL,
+              },
+            })
+          }
           sx={{ borderRadius: 2 }}
         >
           <ListItemIcon sx={{ minWidth: 36 }}>
