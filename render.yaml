@@ -4,7 +4,10 @@ services:
     runtime: node
     plan: free
     rootDir: api
-    buildCommand: npm ci && npx prisma generate && npm run build
+    # --include=dev overrides NODE_ENV=production for this install: the
+    # build needs typescript/@types/* from devDependencies to compile,
+    # even though they're correctly not needed at runtime.
+    buildCommand: npm ci --include=dev && npx prisma generate && npm run build
     startCommand: npx prisma migrate deploy && npm start
     envVars:
       - key: DATABASE_URL
