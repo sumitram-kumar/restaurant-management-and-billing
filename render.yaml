@@ -1,0 +1,21 @@
+services:
+  - name: kalika-billing-api
+    type: web
+    runtime: node
+    plan: free
+    rootDir: api
+    buildCommand: npm ci && npx prisma generate && npm run build
+    startCommand: npx prisma migrate deploy && npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://sumitram-kumar.github.io
+      - key: AUTH0_AUDIENCE
+        value: https://kalika-billing-api
+      - key: AUTH0_ISSUER_BASE_URL
+        value: https://dev-el261mjk5znyjcrw.us.auth0.com/
+      - key: LOG_LEVEL
+        value: info
+      - key: NODE_ENV
+        value: production

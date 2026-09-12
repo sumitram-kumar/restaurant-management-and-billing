@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./components/styles/App.css";
@@ -16,7 +16,11 @@ import PrintInvoice from "./components/PrintInvoice";
 
 const App = () => {
   return (
-    <BrowserRouter>
+    // GitHub Pages serves static files with no server-side rewrites, so a
+    // hard refresh or direct link on a BrowserRouter path (e.g. /invoice)
+    // would 404. HashRouter keeps all client-side routing after a `#`,
+    // which the server never sees.
+    <HashRouter>
       <div className="App">
         <ToastContainer
           position="top-center"
@@ -51,7 +55,7 @@ const App = () => {
           <Route path="/showStats" element={<ProtectedRoute component={Stats} />} />
         </Routes>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 

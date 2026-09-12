@@ -94,6 +94,23 @@ cd client && npm run test:ci
 
 Both `npm run lint` and `npm run typecheck` are available in each package and run in CI alongside the test suite.
 
+## Deployment
+
+All three pieces run on free tiers, wired together with GitHub Actions:
+
+| | Host | Deploys via |
+|---|---|---|
+| Frontend | GitHub Pages | `.github/workflows/deploy-pages.yml` on push to `master` |
+| Backend | Render | `render.yaml` Blueprint, auto-deploys on push |
+| Database | Supabase (Postgres) | provisioned once, migrations run on each backend deploy |
+
+To stand this up from scratch:
+
+1. **Database** — create a [Supabase](https://supabase.com) project, copy its connection string (Project Settings → Database → Connection string → URI, using the pooler/port 6543 for serverless-friendly connections).
+2. **Backend** — on [Render](https://render.com), New → Blueprint, point it at this repo (it reads `render.yaml`). When prompted, paste the Supabase connection string in as `DATABASE_URL`. After the first deploy succeeds, run `npx prisma db seed` once against that `DATABASE_URL` locally to populate sample menu items.
+3. **Frontend** — in this repo's Settings → Pages, set Source to "GitHub Actions". In Settings → Secrets and variables → Actions → Variables, add `REACT_APP_API_BASE_URL` pointing at the Render URL from step 2, then re-run the `Deploy frontend to GitHub Pages` workflow.
+4. **Auth0** — in the existing Application's settings, add the GitHub Pages URL to Allowed Callback URLs, Allowed Logout URLs, and Allowed Web Origins.
+
 ## Known, deliberate gaps
 
 - **CRA, not Vite.** `client/` still uses `react-scripts`. Migrating build tooling is orthogonal to the goals of this rewrite (TypeScript, auth, data modeling, tests) and would add risk without adding anything the app needs - noted here rather than left as a silent gap. `react-scripts`' own dependency tree carries a number of `npm audit` findings (webpack-dev-server, etc.) that are all dev-tooling-only and don't ship in the production build.

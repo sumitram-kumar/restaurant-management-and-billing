@@ -30,7 +30,11 @@ root.render(
       clientId={clientId}
       authorizationParams={{
         audience,
-        redirect_uri: window.location.origin,
+        // On a GitHub Pages project site the app is served from a subpath
+        // (e.g. /restaurant-management-and-billing/), which
+        // window.location.origin alone doesn't include. CRA sets
+        // PUBLIC_URL from package.json's "homepage" at build time.
+        redirect_uri: window.location.origin + process.env.PUBLIC_URL,
       }}
     >
       <AuthTokenBridge />
